@@ -25,6 +25,10 @@ def Oracle (a b : Bool) : Matrix (Fin 2) (Fin 2) ℤ :=
 
 
 @[simp]
+theorem IeqI : Oracle false false = 1 := by decide
+
+
+@[simp]
 def PlusQbit : Matrix (Fin 1) (Fin 2) ℤ := !![1, 1]
 
 
@@ -45,18 +49,15 @@ theorem DeutschAlgorithm (a b : Bool) : Measure (PlusQbit * (Oracle a b) * Hadam
 -- theorem DeutschNew (a b : Bool) : Hadamard 1 * (Oracle a b) * Hadamard 1 = 2 * (-1)^(a.toNat) * XGate^(a.toNat + b.toNat) :=
 --   by
 --     cases a; cases b;
---     simp [XGate, Oracle, PlusQbit, Hadamard 1, mul_apply]
---     rw [ofNat_fin_two]
+--     rw [IeqI, mul_one, HxH]
 --     norm_num
---     simp [XGate, Oracle, PlusQbit, Hadamard 1, mul_apply]
---     rw [ofNat_fin_two]
+--     -- Failing from here
+--     simp [mul_apply, ofNat_fin_two]
 --     norm_num
 --     cases b;
---     simp [XGate, Oracle, PlusQbit, Hadamard 1, mul_apply]
---     rw [ofNat_fin_two]
+--     simp [mul_apply, ofNat_fin_two]
 --     norm_num
---     simp [XGate, Oracle, PlusQbit, Hadamard 1, mul_apply]
---     rw [ofNat_fin_two]
+--     simp [mul_apply, ofNat_fin_two]
 --     norm_num
 
 
