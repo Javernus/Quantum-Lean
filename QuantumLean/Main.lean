@@ -12,7 +12,10 @@ open Matrix
 open Complex
 
 
-theorem XX : XGate * XGate = 1 := by decide
+theorem XX : 2 • XGate * XGate = ((2 : ℕ) : Matrix (Fin 2) (Fin 2) ℂ) := by
+  simp [Matrix.mul_apply, natCast_fin_two]
+  norm_num
+
 theorem ZZ : ZGate * ZGate = 1 := by decide
 
 theorem HZHeqX : Hadamard 1 * ZGate * Hadamard 1 = 2 * XGate := by decide
@@ -39,12 +42,8 @@ def Measure (q : Matrix (Fin 1) (Fin 2) ℤ) : Bool :=
 -- The Deutsch Algorithm
 theorem DeutschAlgorithm (a b : Bool) : Measure (PlusQbit * (Oracle a b) * Hadamard 1) = (a != b) :=
   by
-    cases a; cases b;
-    decide
-    decide
-    cases b;
-    decide
-    decide
+    ext i j
+    cases i; cases j; decide
 
 -- theorem DeutschNew (a b : Bool) : Hadamard 1 * (Oracle a b) * Hadamard 1 = 2 * (-1)^(a.toNat) * XGate^(a.toNat + b.toNat) :=
 --   by
