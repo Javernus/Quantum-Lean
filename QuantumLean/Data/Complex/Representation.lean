@@ -16,15 +16,12 @@ unsafe instance [Repr β] : Repr (Cauchy abv) where
     let seq := r.unquot
     repr (seq 100)
 
--- #eval (1 : ℝ)
-
 end
 end CauSeq.Completion
 
 namespace Real
 unsafe instance : Repr ℝ where reprPrec r _ := repr r.cauchy
 
--- #eval (1 : ℝ) -- 1
 end Real
 
 namespace Complex
@@ -36,7 +33,5 @@ unsafe instance repr : Repr Complex where
       (Std.Format.joinSep · " + ") <|
         ([f.re, f.im]).map fun i =>  _root_.repr i -- TODO: if i = (0 : ℝ) then ("" : Lean.Format) else
 #align complex.has_repr Complex.repr
-
--- #eval (⟨2, 0⟩ : ℂ) -- ⟨(66906971 : Rat)/200000000, 0⟩
 
 end Complex

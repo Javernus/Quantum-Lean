@@ -25,7 +25,6 @@ def Hadamard : (n : ℕ) -> nMatrix n
   | (n + 1) => reindex (Hadamard n ⊗ₖ !![1, 1; 1, -1])
 
 
--- In general, I am trying to prove H * H = I (× a constant) for Hadamard matrices
 theorem H_mul_H : Hadamard n * Hadamard n = (2 ^ n : ℕ) := by
   induction n with
     | zero => simp [Hadamard]
@@ -39,5 +38,3 @@ end Hadamard
 
 
 -- Mathlib Data Finset Prod
--- Cartesian Product? In type def of Hadamard for size of matrix
--- Theorem that proves ⊗ₖ indices can be reindexed without any change to the matrix

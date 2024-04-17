@@ -16,11 +16,6 @@ open Kronecker
 open Circuits
 
 
-def H : nMatrix 1 := !![1, 1; 1, -1]
-def cnum : ℂ := ⟨1, 0⟩
-#eval H
-
-
 def pow_kronecker (n : ℕ) (M : nMatrix 1) : nMatrix n :=
   match n with
     | 0 => 1

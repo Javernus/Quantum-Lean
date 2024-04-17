@@ -35,20 +35,6 @@ def reindex (A : mnMatrix m n) : nMatrix (m + n) :=
   Matrix.reindex QCount_mul_QCount QCount_mul_QCount A
 
 
-theorem identity : (1 : Matrix (Fin (2 ^ 0)) (Fin (2 ^ 0)) ℂ) = (1 : ℕ) := by
-  simp
-
-
-theorem natCast_eq_smul_identity (m : ℕ) : (m : nMatrix n) = m • 1 := by
-  simp
-
-
--- /-- Reindex a circuit matrix to Fin 2 ^ n × Fin 2 ^ n dimensions -/
--- Try to make this work for any m and n
--- def reindex' (A : Matrix (Fin (2 ^ m) × Fin (2 ^ n)) (Fin (2 ^ m) × Fin (2 ^ n)) ℂ) : Matrix (Fin (2 ^ (m + n))) (Fin (2 ^ (m + n))) ℂ :=
---   Matrix.reindex finProdFinEquiv finProdFinEquiv A
-
-
 /-- Prove linearity in multiplication -/
 theorem reindex_mul (A B : mnMatrix m n) : reindex (A * B) = reindex A * reindex B :=
   Matrix.submatrix_mul _ _ _ _ _ (QCount_mul_QCount.symm.bijective)

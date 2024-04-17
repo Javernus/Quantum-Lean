@@ -80,9 +80,3 @@ def DeutschOutcome (a b : Bool) : Matrix (Fin 1) (Fin (2 ^ 1)) ℂ :=
 --     norm_num
 --     simp [mul_apply, ofNat_fin_two]
 --     norm_num
-
-
--- Create a theorem with inputs a and b which are either 0 or 1 (Natural number type)
-
-
--- Perhaps create a theorem that shows given a Gate * Gate2 = Gate3, Gate^⊗n * Gate2^⊗n = Gate3^⊗n
