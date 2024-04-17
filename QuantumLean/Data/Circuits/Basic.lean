@@ -12,13 +12,36 @@ section Reindex
 variable { m n : ℕ }
 
 
+-- Num of qubits
+abbrev QCount (n : ℕ) := Fin (2 ^ n)
+abbrev nMatrix (n : ℕ) := Matrix (QCount n) (QCount n) ℂ
+abbrev mnMatrix (m n : ℕ) := Matrix (QCount m × QCount n) (QCount m × QCount n) ℂ
+abbrev oneMatrix := Matrix (QCount 0) (QCount 0) ℂ
+
+
+theorem one_fin_two : (1 : nMatrix 1) = !![1, 0; 0, 1] := by
+  ext i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+
+def QCount_mul_QCount { m n : ℕ } : (QCount m × QCount n) ≃ QCount (m + n) := by
+  simp [QCount]
+  rw [Nat.pow_add]
+  exact @finProdFinEquiv (2 ^ m) (2 ^ n)
+
+
 /-- Reindex a circuit matrix to Fin 2 ^ n × Fin 2 ^ n dimensions -/
-def reindex (A : Matrix (Fin (2 ^ n) × Fin 2) (Fin (2 ^ n) × Fin 2) ℂ) : Matrix (Fin (2 ^ (n + 1))) (Fin (2 ^ (n + 1))) ℂ :=
-  Matrix.reindex finProdFinEquiv finProdFinEquiv A
+def reindex (A : mnMatrix m n) : nMatrix (m + n) :=
+  Matrix.reindex QCount_mul_QCount QCount_mul_QCount A
 
 
 theorem identity : (1 : Matrix (Fin (2 ^ 0)) (Fin (2 ^ 0)) ℂ) = (1 : ℕ) := by
   simp
+
+
+theorem natCast_eq_smul_identity (m : ℕ) : (m : nMatrix n) = m • 1 := by
+  simp
+
 
 -- /-- Reindex a circuit matrix to Fin 2 ^ n × Fin 2 ^ n dimensions -/
 -- Try to make this work for any m and n
@@ -27,11 +50,11 @@ theorem identity : (1 : Matrix (Fin (2 ^ 0)) (Fin (2 ^ 0)) ℂ) = (1 : ℕ) := b
 
 
 /-- Prove linearity in multiplication -/
-theorem reindex_mul (A B : Matrix (Fin (2 ^ n) × Fin 2) (Fin (2 ^ n) × Fin 2) ℂ) : reindex (A * B) = reindex A * reindex B :=
-  Matrix.submatrix_mul _ _ _ _ _ (finProdFinEquiv.symm.bijective)
+theorem reindex_mul (A B : mnMatrix m n) : reindex (A * B) = reindex A * reindex B :=
+  Matrix.submatrix_mul _ _ _ _ _ (QCount_mul_QCount.symm.bijective)
 
 
-theorem smul_reindex (c : ℕ) (A : Matrix (Fin (2 ^ n) × Fin 2) (Fin (2 ^ n) × Fin 2) ℂ) : reindex (c • A) = c • reindex A := by
+theorem smul_reindex (c : ℕ) (A : mnMatrix m n) : reindex (c • A) = c • reindex A := by
   simp only [reindex, reindex_apply]
   rw [submatrix_smul]
   rfl
@@ -39,10 +62,10 @@ theorem smul_reindex (c : ℕ) (A : Matrix (Fin (2 ^ n) × Fin 2) (Fin (2 ^ n) �
 
 /-- Prove natural number casts to be equivalent under reindexation -/
 theorem reindex_natCast (m : ℕ) :
-    reindex (m : Matrix (Fin (2 ^ n) × Fin 2) (Fin (2 ^ n) × Fin 2) ℂ) = m := by
+    reindex (m : mnMatrix n 1) = m := by
   ext i j
   rw [reindex, reindex_apply, submatrix_apply]
   simp_rw [← diagonal_natCast, diagonal_apply]
-  simp_rw [finProdFinEquiv.symm.injective.eq_iff]
+  simp_rw [QCount_mul_QCount.symm.injective.eq_iff]
 
 end Reindex

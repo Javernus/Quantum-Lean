@@ -15,12 +15,12 @@ section Hadamard
 variable { n : ℕ }
 
 
-theorem hadamard_Identity : (!![1, 1; 1, -1]) * (!![1, 1; 1, -1]) = ((2 : ℕ) : Matrix (Fin 2) (Fin 2) ℂ) := by
+theorem hadamard_Identity : (!![1, 1; 1, -1]) * (!![1, 1; 1, -1]) = ((2 : ℕ) : nMatrix 1) := by
   simp [mul_apply, ofNat_fin_two]
   norm_num
 
 
-def Hadamard : (n : ℕ) -> Matrix (Fin (2 ^ n)) (Fin (2 ^ n)) ℂ
+def Hadamard : (n : ℕ) -> nMatrix n
   | 0 => 1
   | (n + 1) => reindex (Hadamard n ⊗ₖ !![1, 1; 1, -1])
 

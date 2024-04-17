@@ -5,6 +5,7 @@ import Mathlib.Data.Complex.Basic
 
 import «QuantumLean».Data.Circuits.Basic
 import «QuantumLean».Data.Matrix.Kronecker
+import «QuantumLean».Data.Complex.Representation
 
 open Matrix
 open Kronecker
@@ -16,14 +17,14 @@ variable { n : ℕ }
 
 section XGate
 
-
-def XGate : (n : ℕ) -> Matrix (Fin (2 ^ n)) (Fin (2 ^ n)) ℂ
+def X : nMatrix 1 := !![0, 1; 1, 0]
+def XGate : (n : ℕ) -> nMatrix n
   | 0 => 1
-  | (n + 1) => reindex (XGate n ⊗ₖ !![0, 1; 1, 0])
+  | (n + 1) => reindex (XGate n ⊗ₖ X)
 
 
-theorem XGate_Identity : (!![0, 1; 1, 0] * !![0, 1; 1, 0]) = ((1 : ℕ) : Matrix (Fin 2) (Fin 2) ℂ) := by
-  simp [mul_apply, one_fin_two]
+theorem XGate_Identity : (X * X) = (1 : ℕ) := by
+  simp [X, mul_apply, Circuits.one_fin_two]
 
 
 theorem X_mul_X : (XGate n) * (XGate n) = (1 : ℕ) := by
@@ -35,17 +36,20 @@ theorem X_mul_X : (XGate n) * (XGate n) = (1 : ℕ) := by
       rw [kronecker_natCast_natCast, reindex_natCast]
 
 
+#eval XGate 1
+
 end XGate
 section YGate
 
 
-def YGate : (n : ℕ) -> Matrix (Fin (2 ^ n)) (Fin (2 ^ n)) ℂ
+def Y : nMatrix 1 := !![0, -I; I, 0]
+def YGate : (n : ℕ) -> nMatrix n
   | 0 => 1
-  | (n + 1) => reindex (YGate n ⊗ₖ !![0, -I; I, 0])
+  | (n + 1) => reindex (YGate n ⊗ₖ Y)
 
 
-theorem YGate_Identity : (!![0, -I; I, 0] * !![0, -I; I, 0]) = ((1 : ℕ) : Matrix (Fin 2) (Fin 2) ℂ) := by
-  simp [mul_apply, one_fin_two]
+theorem YGate_Identity : (Y * Y) = (1 : ℕ) := by
+  simp [Y, mul_apply, Circuits.one_fin_two]
 
 
 theorem Y_mul_Y : (YGate n) * (YGate n) = (1 : ℕ) := by
@@ -61,13 +65,14 @@ end YGate
 section ZGate
 
 
-def ZGate : (n : ℕ) -> Matrix (Fin (2 ^ n)) (Fin (2 ^ n)) ℂ
+def Z : nMatrix 1 := !![1, 0; 0, -1]
+def ZGate : (n : ℕ) -> nMatrix n
   | 0 => 1
-  | (n + 1) => reindex (ZGate n ⊗ₖ !![1, 0; 0, -1])
+  | (n + 1) => reindex (ZGate n ⊗ₖ Z)
 
 
-theorem ZGate_Identity : (!![1, 0; 0, -1] * !![1, 0; 0, -1]) = ((1 : ℕ) : Matrix (Fin 2) (Fin 2) ℂ) := by
-  simp [mul_apply, one_fin_two]
+theorem ZGate_Identity : (Z * Z) = (1 : ℕ) := by
+  simp [Z, mul_apply, Circuits.one_fin_two]
 
 
 theorem Z_mul_Z : (ZGate n) * (ZGate n) = (1 : ℕ) := by
