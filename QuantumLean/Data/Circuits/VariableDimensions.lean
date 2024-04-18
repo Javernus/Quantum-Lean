@@ -61,6 +61,14 @@ theorem pow_kronecker_of_natCast { i n : ℕ } : pow_kronecker n i = ↑(i ^ n) 
     | succ n ih => rw [pow_kronecker, ih, kronecker_natCast_natCast, reindex_natCast, ← Nat.pow_succ]
 
 
+theorem pow_kronecker_smul { n : ℕ } (M : nMatrix 1) (c : ℕ) : pow_kronecker n (c • M) = c ^ n • pow_kronecker n M := by
+  induction n with
+    | zero => simp [pow_kronecker]
+    | succ n ih =>
+      rw [pow_kronecker, pow_kronecker, ih, smul_kronecker, kronecker_smul, ← smul_assoc, smul_reindex]
+      rw [Nat.pow_succ, smul_eq_mul]
+
+
 def stack_gates (n : ℕ) (gates : ℕ -> nMatrix 1) : nMatrix n :=
   match n with
     | 0 => 1

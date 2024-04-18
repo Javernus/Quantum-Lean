@@ -4,6 +4,7 @@ import Mathlib.Data.Matrix.Kronecker
 import Mathlib.Data.Complex.Basic
 
 import «QuantumLean».Data.Circuits.Basic
+import «QuantumLean».Data.Circuits.VariableDimensions
 import «QuantumLean».Data.Matrix.Kronecker
 import «QuantumLean».Data.Complex.Representation
 
@@ -18,9 +19,7 @@ variable { n : ℕ }
 section XGate
 
 def X : nMatrix 1 := !![0, 1; 1, 0]
-def XGate : (n : ℕ) -> nMatrix n
-  | 0 => 1
-  | (n + 1) => reindex (XGate n ⊗ₖ X)
+def XGate (n : ℕ) := pow_kronecker n X
 
 
 theorem XGate_Identity : (X * X) = (1 : ℕ) := by
@@ -28,24 +27,15 @@ theorem XGate_Identity : (X * X) = (1 : ℕ) := by
 
 
 theorem X_mul_X : (XGate n) * (XGate n) = (1 : ℕ) := by
-  induction n with
-    | zero => simp [XGate]
-    | succ n ih =>
-      rw [XGate, ← reindex_mul, ← mul_kronecker_mul, ih]
-      rw [XGate_Identity]
-      rw [kronecker_natCast_natCast, reindex_natCast]
+  rw [XGate, ← pow_kronecker_mul, XGate_Identity, pow_kronecker_of_natCast, one_pow]
 
-
-#eval XGate 1
 
 end XGate
 section YGate
 
 
 def Y : nMatrix 1 := !![0, -I; I, 0]
-def YGate : (n : ℕ) -> nMatrix n
-  | 0 => 1
-  | (n + 1) => reindex (YGate n ⊗ₖ Y)
+def YGate (n : ℕ) := pow_kronecker n Y
 
 
 theorem YGate_Identity : (Y * Y) = (1 : ℕ) := by
@@ -53,12 +43,7 @@ theorem YGate_Identity : (Y * Y) = (1 : ℕ) := by
 
 
 theorem Y_mul_Y : (YGate n) * (YGate n) = (1 : ℕ) := by
-  induction n with
-    | zero => simp [YGate]
-    | succ n ih =>
-      rw [YGate, ← reindex_mul, ← mul_kronecker_mul, ih]
-      rw [YGate_Identity]
-      rw [kronecker_natCast_natCast, reindex_natCast]
+  rw [YGate, ← pow_kronecker_mul, YGate_Identity, pow_kronecker_of_natCast, one_pow]
 
 
 end YGate
@@ -66,9 +51,7 @@ section ZGate
 
 
 def Z : nMatrix 1 := !![1, 0; 0, -1]
-def ZGate : (n : ℕ) -> nMatrix n
-  | 0 => 1
-  | (n + 1) => reindex (ZGate n ⊗ₖ Z)
+def ZGate (n : ℕ) := pow_kronecker n Z
 
 
 theorem ZGate_Identity : (Z * Z) = (1 : ℕ) := by
@@ -76,12 +59,7 @@ theorem ZGate_Identity : (Z * Z) = (1 : ℕ) := by
 
 
 theorem Z_mul_Z : (ZGate n) * (ZGate n) = (1 : ℕ) := by
-  induction n with
-    | zero => simp [ZGate]
-    | succ n ih =>
-      rw [ZGate, ← reindex_mul, ← mul_kronecker_mul, ih]
-      rw [ZGate_Identity]
-      rw [kronecker_natCast_natCast, reindex_natCast]
+  rw [ZGate, ← pow_kronecker_mul, ZGate_Identity, pow_kronecker_of_natCast, one_pow]
 
 end ZGate
 end Pauli

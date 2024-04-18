@@ -20,32 +20,23 @@ open Circuits
 section CircuitLemmas
 variable { n : ℕ }
 
-theorem HZHeqX : Hadamard n * ZGate n * Hadamard n = (2 ^ n : ℕ) • XGate n := by
-  induction n with
-    | zero => simp [Hadamard, ZGate, XGate]
-    | succ n ih =>
-      rw [Hadamard, ZGate, XGate, ← reindex_mul, ← reindex_mul]
-      rw [← mul_kronecker_mul, ← mul_kronecker_mul, ih, smul_kronecker, Z]
-      simp only [cons_mul, vecMul_cons, head_cons, one_smul, tail_cons, empty_vecMul, add_zero, add_cons, zero_add, empty_add_empty, neg_smul, neg_cons, neg_zero, neg_neg, neg_empty, empty_mul, Equiv.symm_apply_apply, add_right_neg, one_add_one_eq_two]
-      rw [show (!![0, 2; 2, 0] : nMatrix 1) = 2 • !![0, 1; 1, 0] by norm_num]
-      rw [kronecker_smul]
-      rw [smul_reindex, smul_reindex, ← XGate]
-      rw [← smul_assoc]
-      rfl
+
+theorem HZH_eq_X_1 : H * Z * H = 2 • X := by
+  rw [H, Z, X]
+  norm_num
+
+
+theorem HZH_eq_X : Hadamard n * ZGate n * Hadamard n = (2 ^ n : ℕ) • XGate n := by
+  rw [Hadamard, ZGate, ← pow_kronecker_mul, ← pow_kronecker_mul, HZH_eq_X_1, pow_kronecker_smul, ← XGate]
+
+
+theorem HXHeqZ_1 : H * X * H = 2 • Z := by
+  rw [H, X, Z]
+  norm_num
 
 
 theorem HXHeqZ : Hadamard n * XGate n * Hadamard n = (2 ^ n : ℕ) • ZGate n := by
-  induction n with
-    | zero => simp [Hadamard, ZGate, XGate]
-    | succ n ih =>
-      rw [Hadamard, ZGate, XGate, ← reindex_mul, ← reindex_mul]
-      rw [← mul_kronecker_mul, ← mul_kronecker_mul, ih, smul_kronecker, X]
-      simp only [cons_mul, vecMul_cons, head_cons, one_smul, tail_cons, empty_vecMul, add_zero, add_cons, zero_add, empty_add_empty, neg_smul, neg_cons, neg_zero, neg_empty, empty_mul, Equiv.symm_apply_apply, add_right_neg, add_left_neg, add_neg]
-      rw [show (!![1 + 1, 0; 0, -1 + -1] : nMatrix 1) = (2 : ℕ) • !![1, 0; 0, -1] by norm_num]
-      rw [kronecker_smul]
-      rw [smul_reindex, smul_reindex, ← ZGate]
-      rw [← smul_assoc]
-      rfl
+  rw [Hadamard, XGate, ← pow_kronecker_mul, ← pow_kronecker_mul, HXHeqZ_1, pow_kronecker_smul, ← ZGate]
 
 -- Create the Oracle for the Deutsch Algorithm, i.e. O(a, b) = !![-1^a, 0; 0, 1^b] where a, b ∈ {0, 1}
 @[simp]
