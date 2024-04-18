@@ -65,11 +65,32 @@ def s : ℕ -> Bool
   | _ => false
 
 
+def Oracle (s : Bool) : nMatrix 1 := Z ^ s.toNat
+
+
 def Oracle_s (s : ℕ -> Bool) : (n : ℕ) -> nMatrix 1 :=
-  fun n => Z ^ (s n).toNat
+  fun n => Oracle (s n)
 
 
--- theorem Bernstein_Vazirani (s : ℕ -> Bool) : Hadamard n * (stack_gates 8 (Oracle_s s)) * Hadamard n
+def BV_final (s : ℕ -> Bool) : (n : ℕ) -> nMatrix 1 :=
+  fun n => 2 * X ^ (s n).toNat
+
+
+theorem Bernstein_Vazirani (s : ℕ -> Bool) : Hadamard n * (stack_gates n (Oracle_s s)) * Hadamard n = stack_gates n (BV_final s) := by
+  rw [Hadamard, pow_kronecker_mul_stack_gates, stack_gates_mul_pow_kronecker]
+  induction n with
+    | zero => simp [stack_gates, Oracle_s, BV_final]
+    | succ n ih =>
+      rw [stack_gates, Oracle_s, Oracle]
+      -- Go through both cases for s n
+      rw [stack_gates, BV_final]
+      cases (s n);
+      rw [ih, Bool.toNat_false, pow_zero, pow_zero, mul_one, mul_one, H_mul_H_1, Nat.cast_two]
+      rw [ih, Bool.toNat_true] --, Nat.pow_one, pow_zero, mul_one, mul_one, H_mul_H_1, ih, Nat.cast_two]
+      simp only [pow_one]
+      rw [HZH_eq_X_1, ← smul_eq_mul]
+      simp only [nsmul_eq_mul, Nat.cast_ofNat, smul_eq_mul]
+
 
 end CircuitLemmas
 

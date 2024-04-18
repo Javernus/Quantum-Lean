@@ -75,7 +75,7 @@ def stack_gates (n : ℕ) (gates : ℕ -> nMatrix 1) : nMatrix n :=
     | (n + 1) => reindex (stack_gates n gates ⊗ₖ gates n)
 
 
-theorem pow_kronecker_mul' { n : ℕ } (M N : ℕ -> nMatrix 1) : stack_gates n M * stack_gates n N = stack_gates (n) (λ i => M i * N i) := by
+theorem stack_gates_mul_stack_gates { n : ℕ } (M N : ℕ -> nMatrix 1) : stack_gates n M * stack_gates n N = stack_gates (n) (λ i => M i * N i) := by
   induction n with
     | zero => simp [stack_gates]
     | succ m ih =>
@@ -85,3 +85,23 @@ theorem pow_kronecker_mul' { n : ℕ } (M N : ℕ -> nMatrix 1) : stack_gates n 
       rw [← reindex_mul]
       rw [← mul_kronecker_mul]
       rw [ih]
+
+
+theorem pow_kronecker_mul_stack_gates { n : ℕ } (N : nMatrix 1) (gates : ℕ -> nMatrix 1) : pow_kronecker n N * stack_gates n gates = stack_gates n (λ i => N * gates i) := by
+  induction n with
+    | zero => simp only [Nat.zero_eq, Nat.pow_zero, pow_kronecker, stack_gates, mul_one]
+    | succ m ih =>
+      rw [pow_kronecker, stack_gates]
+      rw [← reindex_mul]
+      rw [← mul_kronecker_mul]
+      rw [ih, ← stack_gates]
+
+
+theorem stack_gates_mul_pow_kronecker { n : ℕ } (N : nMatrix 1) (gates : ℕ -> nMatrix 1) : stack_gates n gates * pow_kronecker n N = stack_gates n (λ i => gates i * N) := by
+  induction n with
+    | zero => simp only [Nat.zero_eq, Nat.pow_zero, pow_kronecker, stack_gates, one_mul]
+    | succ m ih =>
+      rw [pow_kronecker, stack_gates]
+      rw [← reindex_mul]
+      rw [← mul_kronecker_mul]
+      rw [ih, ← stack_gates]
