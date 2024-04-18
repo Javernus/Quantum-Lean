@@ -4,6 +4,7 @@ import Mathlib.Data.Matrix.Kronecker
 import Mathlib.Data.Complex.Basic
 
 import «QuantumLean».Data.Circuits.Basic
+import «QuantumLean».Data.Circuits.VariableDimensions
 import «QuantumLean».Data.Matrix.Kronecker
 
 open Matrix
@@ -15,24 +16,17 @@ section Hadamard
 variable { n : ℕ }
 
 
-theorem hadamard_Identity : (!![1, 1; 1, -1]) * (!![1, 1; 1, -1]) = ((2 : ℕ) : nMatrix 1) := by
-  simp [mul_apply, ofNat_fin_two]
+def H : nMatrix 1 := !![1, 1; 1, -1]
+def Hadamard (n : ℕ) := pow_kronecker n (H)
+
+
+theorem hadamard_Identity : H * H = (2 : ℕ) := by
+  simp [H, mul_apply, ofNat_fin_two]
   norm_num
 
 
-def Hadamard : (n : ℕ) -> nMatrix n
-  | 0 => 1
-  | (n + 1) => reindex (Hadamard n ⊗ₖ !![1, 1; 1, -1])
-
-
 theorem H_mul_H : Hadamard n * Hadamard n = (2 ^ n : ℕ) := by
-  induction n with
-    | zero => simp [Hadamard]
-    | succ n ih =>
-      rw [Hadamard, ← reindex_mul, ← mul_kronecker_mul, ih]
-      rw [hadamard_Identity]
-      rw [kronecker_natCast_natCast, reindex_natCast]
-      rfl
+      rw [Hadamard, ← pow_kronecker_mul, hadamard_Identity, pow_kronecker_of_natCast]
 
 end Hadamard
 

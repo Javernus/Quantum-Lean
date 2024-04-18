@@ -49,17 +49,38 @@ theorem HXHeqZ : Hadamard n * XGate n * Hadamard n = (2 ^ n : ℕ) • ZGate n :
 
 -- Create the Oracle for the Deutsch Algorithm, i.e. O(a, b) = !![-1^a, 0; 0, 1^b] where a, b ∈ {0, 1}
 @[simp]
-def Oracle (a b : Bool) : Matrix (Fin (2 ^ 1)) (Fin (2 ^ 1)) ℂ :=
-  !![(-1)^(a.toNat), 0; 0, (-1)^(b.toNat)]
+-- def Oracle (a b : Bool) : Matrix (Fin (2 ^ 1)) (Fin (2 ^ 1)) ℂ :=
+--   !![(-1)^(a.toNat), 0; 0, (-1)^(b.toNat)]
 
 
-def PlusQbit : Matrix (Fin 1) (Fin (2 ^ 1)) ℂ := !![1, 1]
-def ZeroQbit : Matrix (Fin 1) (Fin (2 ^ 1)) ℂ := !![1, 0]
-def OneQbit : Matrix (Fin 1) (Fin (2 ^ 1)) ℂ := !![0, 1]
+-- def PlusQbit : Matrix (Fin 1) (Fin (2 ^ 1)) ℂ := !![1, 1]
+-- def ZeroQbit : Matrix (Fin 1) (Fin (2 ^ 1)) ℂ := !![1, 0]
+-- def OneQbit : Matrix (Fin 1) (Fin (2 ^ 1)) ℂ := !![0, 1]
 
 
-def DeutschOutcome (a b : Bool) : Matrix (Fin 1) (Fin (2 ^ 1)) ℂ :=
-  !![(a == b).toNat, (a != b).toNat]
+-- def DeutschOutcome (a b : Bool) : Matrix (Fin 1) (Fin (2 ^ 1)) ℂ :=
+--   !![(a == b).toNat, (a != b).toNat]
+
+
+def s : ℕ -> Bool
+  | 0 => false
+  | 1 => true
+  | 2 => false
+  | 3 => true
+  | 4 => false
+  | 5 => true
+  | 6 => false
+  | 7 => true
+  | _ => false
+
+
+def Oracle_s (s : ℕ -> Bool) : (n : ℕ) -> nMatrix 1 :=
+  fun n => Z ^ (s n).toNat
+
+
+-- theorem Bernstein_Vazirani (s : ℕ -> Bool) : Hadamard n * (stack_gates 8 (Oracle_s s)) * Hadamard n
+
+end CircuitLemmas
 
 
 -- The Deutsch Algorithm
