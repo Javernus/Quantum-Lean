@@ -10,6 +10,7 @@ open Matrix
 open Kronecker
 open Complex
 
+
 namespace Matrix
 section KroneckerNatCast
 
@@ -27,6 +28,7 @@ theorem kronecker_natCast {A B : Type} [DecidableEq A] [DecidableEq B] (m : ℕ)
   simp only [nsmul_eq_smul_cast ℕ, Nat.cast_id, Nat.cast_mul]
   rw [kronecker_smul]
 
+
 theorem kronecker_natCast_natCast {A B : Type} [DecidableEq A] [DecidableEq B] (m₁ m₂ : ℕ) :
     (m₁ : Matrix A A ℂ) ⊗ₖ (m₂ : Matrix B B ℂ) = ((m₁ * m₂ : ℕ) : Matrix (A × B) (A × B) ℂ) := by
   simp_rw [← nsmul_one]
@@ -35,10 +37,21 @@ theorem kronecker_natCast_natCast {A B : Type} [DecidableEq A] [DecidableEq B] (
   rfl
 
 
-def fin_one_equiv : Fin n ≃ Fin (2 ^ 0) × Fin n := by
-  rw [pow_zero]
-  nth_rewrite 1 [← one_mul n]
-  exact finProdFinEquiv.symm
+theorem blockDiagonal_unique {α U A B : Type} [Unique U] [DecidableEq A] [DecidableEq B]
+  (d : U → Matrix A B α) [Zero α]:
+  blockDiagonal d =
+    Matrix.reindex (Equiv.prodUnique _ _).symm (Equiv.prodUnique _ _).symm (d default) := by
+  ext ⟨a, ua⟩ ⟨b, ub⟩
+  obtain rfl := Subsingleton.elim ua default
+  obtain rfl := Subsingleton.elim ub default
+  rfl
+
+
+theorem kronecker_natOne {U A B : Type} [Unique U] [DecidableEq A] [DecidableEq B] (M : Matrix A B ℂ) :
+    (1 : Matrix U U ℂ) ⊗ₖ M =
+      Matrix.reindex (Equiv.uniqueProd _ _).symm (Equiv.uniqueProd _ _).symm M := by
+  rw [one_kronecker, blockDiagonal_unique]
+  rfl
 
 
 end KroneckerNatCast

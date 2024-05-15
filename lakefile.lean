@@ -8,6 +8,10 @@ package «Quantum-Lean» where
     ⟨`pp.proofs.withType, false⟩
   ]
   -- add any additional package configuration options here
+  moreLinkArgs := #[
+    "-L./.lake/packages/LeanCopilot/.lake/build/lib",
+    "-lctranslate2"
+  ]
 
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4.git"
@@ -15,3 +19,5 @@ require mathlib from git
 @[default_target]
 lean_lib «QuantumLean» where
   -- add any library configuration options here
+
+require LeanCopilot from git "https://github.com/lean-dojo/LeanCopilot.git" @ "v1.1.1"

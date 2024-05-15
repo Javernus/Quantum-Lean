@@ -27,11 +27,7 @@ end Real
 namespace Complex
 
 
-unsafe instance repr : Repr Complex where
-  reprPrec f _p :=
-    (Std.Format.bracket "" · "i") <|
-      (Std.Format.joinSep · " + ") <|
-        ([f.re, f.im]).map fun i =>  _root_.repr i -- TODO: if i = (0 : ℝ) then ("" : Lean.Format) else
-#align complex.has_repr Complex.repr
+unsafe instance instRepr : Repr Complex where
+  reprPrec f p := Repr.addAppParen (repr f.re ++ " + " ++ repr f.im ++ "*I") p
 
 end Complex

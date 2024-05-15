@@ -1,9 +1,10 @@
-import Lean.Meta.Tactic.LibrarySearch
-import Aesop.Main
+-- import Lean.Meta.Tactic.LibrarySearch
+-- import Aesop.Main
 
 import Mathlib.Data.Matrix.Basic
 import Mathlib.Data.Matrix.Notation
 import Mathlib.Data.Complex.Basic
+import Mathlib.Data.Complex.Exponential
 
 -- Import the gates
 import «QuantumLean».Data.Circuits.Basic
@@ -39,7 +40,7 @@ theorem HXHeqZ : Hadamard n * XGate n * Hadamard n = (2 ^ n : ℕ) • ZGate n :
   rw [Hadamard, XGate, ← pow_kronecker_mul, ← pow_kronecker_mul, HXHeqZ_1, pow_kronecker_smul, ← ZGate]
 
 -- Create the Oracle for the Deutsch Algorithm, i.e. O(a, b) = !![-1^a, 0; 0, 1^b] where a, b ∈ {0, 1}
-@[simp]
+-- @[simp]
 -- def Oracle (a b : Bool) : Matrix (Fin (2 ^ 1)) (Fin (2 ^ 1)) ℂ :=
 --   !![(-1)^(a.toNat), 0; 0, (-1)^(b.toNat)]
 
@@ -52,6 +53,12 @@ theorem HXHeqZ : Hadamard n * XGate n * Hadamard n = (2 ^ n : ℕ) • ZGate n :
 -- def DeutschOutcome (a b : Bool) : Matrix (Fin 1) (Fin (2 ^ 1)) ℂ :=
 --   !![(a == b).toNat, (a != b).toNat]
 
+
+--
+-- The Bernstein-Vazirani Algorithm
+--
+
+namespace BernsteinVazirani
 
 def s : ℕ -> Bool
   | 0 => false
@@ -81,16 +88,15 @@ theorem Bernstein_Vazirani (s : ℕ -> Bool) : Hadamard n * (stack_gates n (Orac
   induction n with
     | zero => simp [stack_gates, Oracle_s, BV_final]
     | succ n ih =>
-      rw [stack_gates, Oracle_s, Oracle]
-      -- Go through both cases for s n
-      rw [stack_gates, BV_final]
+      rw [stack_gates, Oracle_s, Oracle, stack_gates, BV_final]
       cases (s n);
       rw [ih, Bool.toNat_false, pow_zero, pow_zero, mul_one, mul_one, H_mul_H_1, Nat.cast_two]
-      rw [ih, Bool.toNat_true] --, Nat.pow_one, pow_zero, mul_one, mul_one, H_mul_H_1, ih, Nat.cast_two]
-      simp only [pow_one]
-      rw [HZH_eq_X_1, ← smul_eq_mul]
+      rw [ih, Bool.toNat_true]
+      simp only [pow_one] -- rw denies using pow_one
+      rw [HZH_eq_X_1]
       simp only [nsmul_eq_mul, Nat.cast_ofNat, smul_eq_mul]
 
+end BernsteinVazirani
 
 end CircuitLemmas
 
@@ -113,3 +119,20 @@ end CircuitLemmas
 --     norm_num
 --     simp [mul_apply, ofNat_fin_two]
 --     norm_num
+
+
+-- stack_gates -> tensor_power
+-- CNOT & SWAP
+-- Hadamard -> H?
+-- Act in ℂ^p (or ℂ^{0,...,p-1} ≃ ℂ^(Fₚ))
+-- X gate adds one to qubit
+-- Z × qubit a is root of unity to power of a (ωₚ = exp(2πi/p))
+
+
+
+
+
+-- Matrix def with vector support
+-- Prove BV on |0>
+-- 1 out of 4 Grover's
+  -- CX, CZ, CCX?
