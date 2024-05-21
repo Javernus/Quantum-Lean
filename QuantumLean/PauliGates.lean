@@ -16,50 +16,50 @@ open Circuits
 section Pauli
 variable { n : ℕ }
 
-section XGate
+section Xₙ
 
 def X : nMatrix 1 := !![0, 1; 1, 0]
-def XGate (n : ℕ) := pow_kronecker n X
+def Xₙ (n : ℕ) := tensor_power' n X
 
 
-theorem XGate_Identity : (X * X) = (1 : ℕ) := by
+theorem X_Identity : (X * X) = (1 : ℕ) := by
   simp [X, mul_apply, Circuits.one_fin_two]
 
 
-theorem X_mul_X : (XGate n) * (XGate n) = (1 : ℕ) := by
-  rw [XGate, ← pow_kronecker_mul, XGate_Identity, pow_kronecker_of_natCast, one_pow]
+theorem X_mul_X : (Xₙ n) * (Xₙ n) = (1 : ℕ) := by
+  rw [Xₙ, ← tensor_power_mul, @Pi.mul_def, X_Identity, tensor_power_of_natCast, one_pow]
 
 
-end XGate
-section YGate
+end Xₙ
+section Yₙ
 
 
 def Y : nMatrix 1 := !![0, -I; I, 0]
-def YGate (n : ℕ) := pow_kronecker n Y
+def Yₙ (n : ℕ) := tensor_power' n Y
 
 
-theorem YGate_Identity : (Y * Y) = (1 : ℕ) := by
+theorem Y_Identity : (Y * Y) = (1 : ℕ) := by
   simp [Y, mul_apply, Circuits.one_fin_two]
 
 
-theorem Y_mul_Y : (YGate n) * (YGate n) = (1 : ℕ) := by
-  rw [YGate, ← pow_kronecker_mul, YGate_Identity, pow_kronecker_of_natCast, one_pow]
+theorem Y_mul_Y : (Yₙ n) * (Yₙ n) = (1 : ℕ) := by
+  rw [Yₙ, ← tensor_power_mul, @Pi.mul_def, Y_Identity, tensor_power_of_natCast, one_pow]
 
 
-end YGate
-section ZGate
+end Yₙ
+section Zₙ
 
 
 def Z : nMatrix 1 := !![1, 0; 0, -1]
-def ZGate (n : ℕ) := pow_kronecker n Z
+def Zₙ (n : ℕ) := tensor_power' n Z
 
 
-theorem ZGate_Identity : (Z * Z) = (1 : ℕ) := by
+theorem Z_Identity : (Z * Z) = (1 : ℕ) := by
   simp [Z, mul_apply, Circuits.one_fin_two]
 
 
-theorem Z_mul_Z : (ZGate n) * (ZGate n) = (1 : ℕ) := by
-  rw [ZGate, ← pow_kronecker_mul, ZGate_Identity, pow_kronecker_of_natCast, one_pow]
+theorem Z_mul_Z : (Zₙ n) * (Zₙ n) = (1 : ℕ) := by
+  rw [Zₙ, ← tensor_power_mul, @Pi.mul_def, Z_Identity, tensor_power_of_natCast, one_pow]
 
-end ZGate
+end Zₙ
 end Pauli

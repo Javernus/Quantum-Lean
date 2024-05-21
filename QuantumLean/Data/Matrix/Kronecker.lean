@@ -37,8 +37,8 @@ theorem kronecker_natCast_natCast {A B : Type} [DecidableEq A] [DecidableEq B] (
   rfl
 
 
-theorem blockDiagonal_unique {α U A B : Type} [Unique U] [DecidableEq A] [DecidableEq B]
-  (d : U → Matrix A B α) [Zero α]:
+theorem blockDiagonal_unique {α A B : Type} [DecidableEq A] [DecidableEq B]
+  (d : Fin 1 → Matrix A B α) [Zero α]:
   blockDiagonal d =
     Matrix.reindex (Equiv.prodUnique _ _).symm (Equiv.prodUnique _ _).symm (d default) := by
   ext ⟨a, ua⟩ ⟨b, ub⟩
@@ -47,8 +47,9 @@ theorem blockDiagonal_unique {α U A B : Type} [Unique U] [DecidableEq A] [Decid
   rfl
 
 
-theorem kronecker_natOne {U A B : Type} [Unique U] [DecidableEq A] [DecidableEq B] (M : Matrix A B ℂ) :
-    (1 : Matrix U U ℂ) ⊗ₖ M =
+@[simp]
+theorem kronecker_natOne {A B : Type} [DecidableEq A] [DecidableEq B] (M : Matrix A B ℂ) :
+    (1 : Matrix (Fin 1) (Fin 1) ℂ) ⊗ₖ M =
       Matrix.reindex (Equiv.uniqueProd _ _).symm (Equiv.uniqueProd _ _).symm M := by
   rw [one_kronecker, blockDiagonal_unique]
   rfl

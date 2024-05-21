@@ -21,13 +21,15 @@ variable { m n : ℕ }
 -- Num of qubits
 @[simp]
 abbrev QCount (n : ℕ) := Fin (2 ^ n)
-abbrev nMatrix (n : ℕ) := Matrix (QCount n) (QCount n) ℂ
-abbrev nRMatrix (n : ℕ) := Matrix (QCount n) (QCount n) (Finset ℂ)
-abbrev mnMatrix (m n : ℕ) := Matrix (QCount m × QCount n) (QCount m × QCount n) ℂ
 
 abbrev nMatrix' (n n' : ℕ) := Matrix (QCount n) (QCount n') ℂ
-abbrev nRMatrix' (n n' : ℕ) := Matrix (QCount n) (QCount n') (Finset ℂ)
 abbrev mnMatrix' (m m' n n' : ℕ) := Matrix (QCount m × QCount n) (QCount m' × QCount n') ℂ
+
+abbrev nMatrix (n : ℕ) := nMatrix' n n
+abbrev mnMatrix (m n : ℕ) := mnMatrix' m m n n
+
+def A : nMatrix 2 := !![1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 1, 0; 0, 0, 0, -1]
+
 
 
 theorem one_fin_two : (1 : nMatrix 1) = !![1, 0; 0, 1] := by

@@ -17,16 +17,16 @@ variable { n : ℕ }
 
 
 def H : nMatrix 1 := !![1, 1; 1, -1]
-def Hadamard (n : ℕ) := pow_kronecker n H
+def Hₙ (n : ℕ) := tensor_power' n H
 
 
-theorem H_mul_H_1 : H * H = (2 : ℕ) := by
+theorem H_Identity : H * H = (2 : ℕ) := by
   simp [H, mul_apply, ofNat_fin_two]
   norm_num
 
 
-theorem H_mul_H : Hadamard n * Hadamard n = (2 ^ n : ℕ) := by
-  rw [Hadamard, ← pow_kronecker_mul, H_mul_H_1, pow_kronecker_of_natCast]
+theorem H_mul_H : Hₙ n * Hₙ n = (2 ^ n : ℕ) := by
+  rw [Hₙ, ← tensor_power_mul, @Pi.mul_def, H_Identity, tensor_power_of_natCast]
 
 end Hadamard
 

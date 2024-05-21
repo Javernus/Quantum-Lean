@@ -1,0 +1,2 @@
+-- Implement a set of "qubit" related definitions and theorems :)
+-- Could perhaps be a place where Dirac is implemened at some point?
