@@ -14,7 +14,7 @@ section CNOT
 -- Make it n-qubit with props for control qubit and affected qubit(s?)
 def CX : nMatrix 2 := !![1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 0, 1; 0, 0, 1, 0]
 def XC : nMatrix 2 := !![1, 0, 0, 0; 0, 0, 0, 1; 0, 0, 1, 0; 0, 1, 0, 0]
-def CXₙ (n : ℕ) := pow_kronecker n CX
+def CXₙ (n : ℕ) := tensor_power' n CX
 
 
 theorem CXₙ_Identity : (CX * CX) = (1 : ℕ) := by
@@ -34,7 +34,7 @@ theorem XCₙ_Identity : (XC * XC) = (1 : ℕ) := by
 
 
 theorem CX_mul_CX : (CXₙ n) * (CXₙ n) = (1 : ℕ) := by
-  rw [CXₙ, ← pow_kronecker_mul, CXₙ_Identity, pow_kronecker_of_natCast, one_pow]
+  rw [CXₙ, ← tensor_power_mul, @Pi.mul_def, CXₙ_Identity, tensor_power_of_natCast, one_pow]
 
 
 def SWAP : nMatrix 2 := CX * XC * CX

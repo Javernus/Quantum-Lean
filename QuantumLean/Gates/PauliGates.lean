@@ -6,7 +6,6 @@ import Mathlib.Data.Complex.Basic
 import «QuantumLean».Data.Circuits.Basic
 import «QuantumLean».Data.Circuits.VariableDimensions
 import «QuantumLean».Data.Matrix.Kronecker
-import «QuantumLean».Data.Complex.Representation
 
 open Matrix
 open Kronecker

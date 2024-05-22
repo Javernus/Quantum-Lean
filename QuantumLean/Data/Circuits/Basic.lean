@@ -15,7 +15,7 @@ open Kronecker
 namespace Circuits
 
 section Reindex
-variable { m n : ℕ }
+variable { m m' n n' o o' : ℕ }
 
 
 -- Num of qubits
@@ -55,15 +55,15 @@ def QCount_mul_succ_n : (QCount (m * n) × QCount m) ≃ QCount (m * (n + 1)) :=
 
 
 /-- Reindex a circuit matrix to Fin 2 ^ n × Fin 2 ^ n dimensions -/
-def reindex₁ (A : mnMatrix m n) : nMatrix (m + n) :=
+def reindex₁ (A : mnMatrix' m m' n n') : nMatrix' (m + n) (m' + n') :=
   Matrix.reindex QCount_mul_QCount QCount_mul_QCount A
 
 
-def reindex₂ (A : nMatrix (m * 1)) : nMatrix m :=
+def reindex₂ (A : nMatrix' (m * 1) (m' * 1)) : nMatrix' m m' :=
   Matrix.reindex QCount_mul_one QCount_mul_one A
 
 
-def reindex₃ (A : mnMatrix (m * n) m) : nMatrix (m * (n + 1)) :=
+def reindex₃ (A : mnMatrix' (m * n) (m' * n) m m') : nMatrix' (m * (n + 1)) (m' * (n + 1)) :=
   Matrix.reindex QCount_mul_succ_n QCount_mul_succ_n A
 
 
@@ -89,15 +89,17 @@ theorem reindex₃_one : reindex₃ (1 : mnMatrix (m * n) m) = 1 := by
 
 
 /-- Prove linearity in multiplication -/
-theorem reindex₁_mul (A B : mnMatrix m n) : reindex₁ (A * B) = reindex₁ A * reindex₁ B :=
+theorem reindex₁_mul (A : mnMatrix' m m' n n') (B : mnMatrix' m' o n' o')
+  : reindex₁ (A * B) = reindex₁ A * reindex₁ B :=
   Matrix.submatrix_mul _ _ _ _ _ (QCount_mul_QCount.symm.bijective)
 
 
-theorem reindex₂_mul (A B : nMatrix (m * 1)) : reindex₂ (A * B) = reindex₂ A * reindex₂ B :=
+theorem reindex₂_mul (A : nMatrix' (m * 1) (m' * 1)) (B : nMatrix' (m' * 1) (o * 1))
+  : reindex₂ (A * B) = reindex₂ A * reindex₂ B :=
   Matrix.submatrix_mul _ _ _ _ _ (QCount_mul_one.symm.bijective)
 
 
-theorem reindex₃_mul (A B : mnMatrix (m * n) m) : reindex₃ (A * B) = reindex₃ A * reindex₃ B :=
+theorem reindex₃_mul (A : mnMatrix' (m * n) (m' * n) m m') (B : mnMatrix' (m' * n) (o * n) m' o) : reindex₃ (A * B) = reindex₃ A * reindex₃ B :=
   Matrix.submatrix_mul _ _ _ _ _ (QCount_mul_succ_n.symm.bijective)
 
 
