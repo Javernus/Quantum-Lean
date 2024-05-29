@@ -14,4 +14,10 @@ open Circuits
 -- Implement a set of "qubit" related definitions and theorems :)
 -- Could perhaps be a place where Dirac is implemened at some point?
 
-abbrev Qubit (n : ℕ) := nMatrix' n 0
+abbrev Qubit (n : ℕ) := nMatrix' 0 n
+
+
+/-- A vector with values of s n -/
+def Q (n : ℕ) (s : ℕ -> ℂ) : Qubit n := of fun _ i => s i
+def Q' (n : ℕ) (s : ℂ) : Qubit n := of fun _ _ => s
+def Q₁ : Qubit 2 := !![1, 0, 0, 0]

@@ -17,7 +17,11 @@ variable { n : ℕ }
 
 
 def H : nMatrix 1 := !![1, 1; 1, -1]
+def H₁ : nMatrix 2 := !![1, 0, 1, 0; 0, 1, 0, 1; 1, 0, -1, 0; 0, 1, 0, -1]
+def IH : nMatrix 2 := !![1, 1, 0, 0; 1, -1, 0, 0; 0, 0, 1, 1; 0, 0, 1, -1]
+def H₂ : nMatrix 2 := !![1, 1, 1, 1; 1, -1, 1, -1; 1, 1, -1, -1; 1, -1, -1, 1]
 def Hₙ (n : ℕ) := tensor_power' n H
+def Hᵢ (n i : ℕ) := tensor_power n (fun j => if i == j then H else 1)
 
 
 theorem H_Identity : H * H = (2 : ℕ) := by

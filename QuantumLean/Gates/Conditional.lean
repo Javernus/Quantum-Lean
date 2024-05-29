@@ -4,6 +4,7 @@ import Mathlib.Data.Matrix.Kronecker
 
 import «QuantumLean».Data.Circuits.Basic
 import «QuantumLean».Data.Circuits.VariableDimensions
+import «QuantumLean».Gates.Hadamard
 
 open Matrix
 open Kronecker
@@ -35,6 +36,23 @@ theorem XCₙ_Identity : (XC * XC) = (1 : ℕ) := by
 
 theorem CX_mul_CX : (CXₙ n) * (CXₙ n) = (1 : ℕ) := by
   rw [CXₙ, ← tensor_power_mul, @Pi.mul_def, CXₙ_Identity, tensor_power_of_natCast, one_pow]
+
+
+-- Make it n-qubit with props for control qubit and affected qubit(s?)
+def CZ : nMatrix 2 := !![1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 1, 0; 0, 0, 0, -1]
+def CZₙ (n : ℕ) := tensor_power' n CZ
+
+
+theorem CZₙ_Identity : (CZ * CZ) = (1 : ℕ) := by
+  simp [CZ]
+
+  -- rw [← @diagonal_one]
+  ext i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+
+theorem CZ_mul_CZ : (CZₙ n) * (CZₙ n) = (1 : ℕ) := by
+  rw [CZₙ, ← tensor_power_mul, @Pi.mul_def, CZₙ_Identity, tensor_power_of_natCast, one_pow]
 
 
 def SWAP : nMatrix 2 := CX * XC * CX

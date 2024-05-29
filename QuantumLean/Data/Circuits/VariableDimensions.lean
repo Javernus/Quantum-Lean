@@ -15,6 +15,9 @@ open Kronecker
 open Circuits
 
 
+section VariableDimensions
+
+
 variable {m n : Type*} {R : Type*} [Semiring R]
 
 
@@ -25,11 +28,48 @@ def tensor_power {m m' : ℕ} (n : ℕ) (gates : ℕ -> nMatrix' m m') : nMatrix
     | (n + 1) => reindex₃ (tensor_power n gates ⊗ₖ gates (n + 1))
 
 
-abbrev tensor_power' {m : ℕ} (n : ℕ) (M : nMatrix m) : nMatrix (m * n) := tensor_power n (fun _ => M)
+abbrev tensor_power' {m m' : ℕ} (n : ℕ) (M : nMatrix' m m') : nMatrix' (m * n) (m' * n) := tensor_power n (fun _ => M)
 
 
 theorem tensor_power_zero {m m' : ℕ} { gates : ℕ -> nMatrix' m m' } : tensor_power 0 gates = !![1] := by
   simp [tensor_power]
+
+
+-- theorem reindex_tensor {m m' : ℕ} {A : nMatrix' m m'} : reindex₂ (reindex₃ (reindex (Equiv.uniqueProd (Fin (2 ^ m)) (Fin 1)).symm (Equiv.uniqueProd (Fin (2 ^ m')) (Fin 1)).symm A)) = A := by
+--   simp [reindex₂, reindex₃]
+--   induction m with
+--     | zero =>
+--     induction m' with
+--       | zero =>
+--         simp [Nat.zero_eq, Nat.pow_zero]
+--         ext i j
+--         fin_cases i <;> fin_cases j <;> rfl
+--       | succ m ih₁ =>
+--         ext i j
+--         fin_cases i
+--         rw?
+
+
+
+-- theorem tensor_power_one {m m' : ℕ} { gates : ℕ -> nMatrix' m m' } : reindex₂ (tensor_power 1 gates) = gates 1 := by
+--   simp
+--   rw [kronecker_matOne]
+--   simp only [reindex_apply, Equiv.symm_symm, Equiv.coe_uniqueProd]
+--   simp [reindex₂, reindex₃, QCount]
+--   induction m with
+--     | zero =>
+--       induction m' with
+--         | zero =>
+--           simp only [Nat.zero_eq, Nat.pow_zero]
+--           ext i j
+--           fin_cases i <;> fin_cases j <;> rfl
+--         | succ m' ih₁ =>
+--           simp only [Nat.zero_eq, Nat.pow_zero]
+--           rw [ih₁]
+
+--     | succ m ih =>
+
+--     ext i j <;> fin_cases i <;> fin_cases j <;> rfl
 
 
 theorem tensor_power_mul { m n : ℕ } (M N : ℕ -> nMatrix m)
@@ -46,7 +86,7 @@ theorem tensor_power_mul { m n : ℕ } (M N : ℕ -> nMatrix m)
       rw [@Pi.mul_apply]
 
 
-theorem one_eq { m : ℕ } : !![1] = (1 :  nMatrix' (m * Nat.zero) (m * Nat.zero)) := by
+theorem one_eq' { m : ℕ } : !![1] = (1 :  nMatrix' (m * Nat.zero) (m * Nat.zero)) := by
   ext i j
   fin_cases i; fin_cases j; rfl
 
@@ -55,7 +95,7 @@ theorem tensor_power_of_one { m n : ℕ } : tensor_power n (fun _ => (1 : nMatri
   induction n with
     | zero =>
       simp [tensor_power]
-      exact one_eq
+      exact one_eq'
     | succ n ih =>
       rw [tensor_power]
       rw [ih]
@@ -88,3 +128,18 @@ theorem tensor_power_mul_tensor_power { m n : ℕ } (M N : ℕ -> nMatrix m)
       rw [← reindex₃_mul]
       rw [← mul_kronecker_mul]
       rw [ih]
+
+
+-- theorem tensor_power_slice { m m' n o : ℕ } (M : nMatrix' m m')
+--   : tensor_power' (n * o) M = reindex₄ (tensor_power' o (tensor_power' n M)) := by
+--   rw [tensor_power', tensor_power', tensor_power']
+--   induction n with
+--     | zero =>
+--       rw [@tensor_power_zero]
+--       simp only [Nat.zero_eq, Nat.mul_zero]
+
+
+
+
+
+end VariableDimensions

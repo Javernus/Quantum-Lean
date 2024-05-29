@@ -55,5 +55,15 @@ theorem kronecker_natOne {A B : Type} [DecidableEq A] [DecidableEq B] (M : Matri
   rfl
 
 
+theorem one_eq : !![1] = (1 : Matrix (Fin 1) (Fin 1) ℂ) := by
+  ext i j
+  fin_cases i; fin_cases j; rfl
+
+
+theorem kronecker_matOne {A B : Type} [DecidableEq A] [DecidableEq B] (M : Matrix A B ℂ) : !![1] ⊗ₖ M = Matrix.reindex (Equiv.uniqueProd _ _).symm (Equiv.uniqueProd _ _).symm M := by
+  rw [← @kronecker_natOne, one_eq]
+
+
+
 end KroneckerNatCast
 end Matrix

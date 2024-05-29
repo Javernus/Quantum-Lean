@@ -18,6 +18,7 @@ variable { n : ℕ }
 section Xₙ
 
 def X : nMatrix 1 := !![0, 1; 1, 0]
+def X₂ : nMatrix 2 := !![0, 0, 0, 1; 0, 0, 1, 0; 0, 1, 0, 0; 1, 0, 0, 0]
 def Xₙ (n : ℕ) := tensor_power' n X
 
 
