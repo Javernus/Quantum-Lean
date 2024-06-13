@@ -30,7 +30,7 @@ theorem X_Identity : (X * X) = (1 : ℕ) := by
 
 
 theorem X_mul_X : (Xₙ n) * (Xₙ n) = (1 : ℕ) := by
-  rw [Xₙ, ← tensor_power_mul, @Pi.mul_def, X_Identity, tensor_power_of_natCast, one_pow]
+  rw [Xₙ, tensor_power_mul, X_Identity, tensor_power_of_natCast, one_pow]
 
 
 end Xₙ
@@ -48,7 +48,7 @@ theorem Y_Identity : (Y * Y) = (1 : ℕ) := by
 
 
 theorem Y_mul_Y : (Yₙ n) * (Yₙ n) = (1 : ℕ) := by
-  rw [Yₙ, ← tensor_power_mul, @Pi.mul_def, Y_Identity, tensor_power_of_natCast, one_pow]
+  rw [Yₙ, tensor_power_mul, Y_Identity, tensor_power_of_natCast, one_pow]
 
 
 end Yₙ
@@ -66,7 +66,7 @@ theorem Z_Identity : (Z * Z) = (1 : ℕ) := by
 
 
 theorem Z_mul_Z : (Zₙ n) * (Zₙ n) = (1 : ℕ) := by
-  rw [Zₙ, ← tensor_power_mul, @Pi.mul_def, Z_Identity, tensor_power_of_natCast, one_pow]
+  rw [Zₙ, tensor_power_mul, Z_Identity, tensor_power_of_natCast, one_pow]
 
 end Zₙ
 end Pauli
@@ -81,20 +81,16 @@ theorem HXHeqZ' : H * X * H = 2 • Z := by
 
 
 theorem HXHeqZ : Hₙ n * Xₙ n * Hₙ n = (2 ^ n : ℕ) • Zₙ n := by
-  rw [Hₙ, Xₙ, ← tensor_power_mul, ← tensor_power_mul]
-  nth_rw 2 [@Pi.mul_def]
-  rw [@Pi.mul_def, HXHeqZ', tensor_power_smul, Zₙ]
+  rw [Hₙ, Xₙ, tensor_power_mul, tensor_power_mul, HXHeqZ', tensor_power_smul, Zₙ]
 
 
-theorem HZH_eq_X' : H * Z * H = 2 • X := by
+theorem HZHeqX' : H * Z * H = 2 • X := by
   rw [H, Z, X]
   norm_num
 
 
-theorem HZH_eq_X : Hₙ n * Zₙ n * Hₙ n = (2 ^ n : ℕ) • Xₙ n := by
-  rw [Hₙ, Zₙ, ← tensor_power_mul, ← tensor_power_mul]
-  nth_rw 2 [@Pi.mul_def]
-  rw [@Pi.mul_def, HZH_eq_X', tensor_power_smul, Xₙ]
+theorem HZHeqX : Hₙ n * Zₙ n * Hₙ n = (2 ^ n : ℕ) • Xₙ n := by
+  rw [Hₙ, Zₙ, tensor_power_mul, tensor_power_mul, HZHeqX', tensor_power_smul, Xₙ]
 
 
 end CircuitLemmas

@@ -29,7 +29,7 @@ theorem H_Identity : H * H = (2 : ℕ) := by
   simp only [ofNat_fin_two]
 
 theorem H_mul_H : Hₙ n * Hₙ n = (2 ^ n : ℕ) := by
-  rw [Hₙ, ← tensor_power_mul, @Pi.mul_def, H_Identity, tensor_power_of_natCast]
+  rw [Hₙ, tensor_power_mul, H_Identity, tensor_power_of_natCast]
 
 end Hadamard
 

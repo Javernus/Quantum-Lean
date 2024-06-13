@@ -48,15 +48,19 @@ theorem sᵢ_eq_zero : H * Z ^ Bool.toNat false * H = 2 • X ^ Bool.toNat false
 theorem sᵢ_eq_one : (H * Z ^ Bool.toNat true * H) = 2 • X ^ Bool.toNat true := by
   rw [Bool.toNat_true]
   simp only [pow_one]
-  exact HZH_eq_X'
+  exact HZHeqX'
 
 
-theorem BernsteinVaziraniAlgorithm' (s : ℕ -> Bool) : QZeroₙ n * (Hₙ n * (tensor_power n (Oracleₛ s)) * Hₙ n) = tensor_power n (Outcome s) := by
-  rw [QZeroₙ, Hₙ, tensor_power_mul_tensor_power, tensor_power_mul_tensor_power, tensor_power_mul_tensor_power]
+theorem BernsteinVaziraniAlgorithm (s : ℕ -> Bool) : QZeroₙ n * (Hₙ n * (tensor_power n (Oracleₛ s)) * Hₙ n) = tensor_power n (Outcome s) := by
+  rw [QZeroₙ, Hₙ, tensor_power_mul, tensor_power_mul, tensor_power_mul]
   induction n with
     | zero => rw [Nat.zero_eq, tensor_power, tensor_power]
     | succ n ih =>
-      rw [tensor_power, Oracleₛ, Oracle, tensor_power, Outcome]
+      -- ih : (tensor_power n fun i ↦ QZero * (H * Oracleₛ s i * H)) = tensor_power n (Outcome s)
+      rw [tensor_power, tensor_power]
+      -- (tensor_power n fun i ↦ QZero * (H * Oracleₛ s i * H)) ⊗ₖ (Oracleₛ s i * H)
+      -- = (tensor_power n (Outcome s)) ⊗ₖ (Outcome s (n + 1))
+      rw [Oracleₛ, Oracle, Outcome]
       cases (s (n + 1));
       rw [ih, sᵢ_eq_zero]
       rw [ih, sᵢ_eq_one]

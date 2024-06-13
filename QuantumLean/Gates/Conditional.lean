@@ -35,7 +35,7 @@ theorem XC_Identity : (XC * XC) = (1 : ℕ) := by
 
 
 theorem CX_mul_CX : (CXₙ n) * (CXₙ n) = (1 : ℕ) := by
-  rw [CXₙ, ← tensor_power_mul, @Pi.mul_def, CX_Identity, tensor_power_of_natCast, one_pow]
+  rw [CXₙ, tensor_power_mul, CX_Identity, tensor_power_of_natCast, one_pow]
 
 
 -- Make it n-qubit with props for control qubit and affected qubit(s?)
@@ -52,7 +52,7 @@ theorem CZ_Identity : (CZ * CZ) = (1 : ℕ) := by
 
 
 theorem CZ_mul_CZ : (CZₙ n) * (CZₙ n) = (1 : ℕ) := by
-  rw [CZₙ, ← tensor_power_mul, @Pi.mul_def, CZ_Identity, tensor_power_of_natCast, one_pow]
+  rw [CZₙ, tensor_power_mul, CZ_Identity, tensor_power_of_natCast, one_pow]
 
 
 def SWAP : nMatrix 2 := CX * XC * CX

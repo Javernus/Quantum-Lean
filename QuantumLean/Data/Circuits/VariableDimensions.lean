@@ -74,7 +74,7 @@ theorem tensor_power_zero { gates : ℕ -> nMatrix' m m' } : tensor_power 0 gate
 --     ext i j <;> fin_cases i <;> fin_cases j <;> rfl
 
 
-theorem tensor_power_mul (M N : ℕ -> nMatrix m)
+theorem tensor_power_mul' (M N : ℕ -> nMatrix m)
   : tensor_power n (M * N) = tensor_power n M * tensor_power n N := by
   induction n with
     | zero => simp
@@ -119,7 +119,7 @@ theorem tensor_power_smul (M : nMatrix m) (c : ℕ)
       rw [Nat.pow_succ, smul_eq_mul]
 
 
-theorem tensor_power_mul_tensor_power (M : ℕ -> nMatrix' m m') (N : ℕ -> nMatrix' m' o)
+theorem tensor_power_mul (M : ℕ -> nMatrix' m m') (N : ℕ -> nMatrix' m' o)
   : tensor_power n M * tensor_power n N = tensor_power (n) (λ i => M i * N i) := by
   induction n with
     | zero => simp [tensor_power]
