@@ -36,45 +36,30 @@ end Deutsch
 namespace BernsteinVazirani
 
 
-def Oracle (s : Bool) : nMatrix 1 := Z ^ s.toNat
-def Oracle_s (s : ℕ -> Bool) : (n : ℕ) -> nMatrix 1 := fun n => Oracle (s n)
-def BV_final (s : ℕ -> Bool) : (n : ℕ) -> nMatrix 1 := fun n => 2 * X ^ (s n).toNat
-def Outcome (s : ℕ -> Bool) : (n : ℕ) -> Qubit 1 := fun n => 2 • QZero * X ^ (s n).toNat
+def Oracle (sᵢ : Bool) : nMatrix 1 := Z ^ sᵢ.toNat
+def Oracleₛ (s : ℕ -> Bool) : (i : ℕ) -> nMatrix 1 := fun i => Oracle (s i)
+def Outcome (s : ℕ -> Bool) : (i : ℕ) -> Qubit 1 := fun i => 2 • QZero * X ^ (s i).toNat
 
 
-theorem BernsteinVaziraniAlgorithm (s : ℕ -> Bool) : Hₙ n * (tensor_power n (Oracle_s s)) * Hₙ n = tensor_power n (BV_final s) := by
-  rw [Hₙ, tensor_power_mul_tensor_power, tensor_power_mul_tensor_power]
-  induction n with
-    | zero => simp [tensor_power, Oracle_s, BV_final]
-    | succ n ih =>
-      rw [tensor_power, Oracle_s, Oracle, tensor_power, BV_final]
-      cases (s (n + 1));
-      rw [ih, Bool.toNat_false, pow_zero, pow_zero, mul_one, mul_one, H_Identity, Nat.cast_two]
-      rw [ih, Bool.toNat_true]
-      simp only [pow_one] -- rw denies using pow_one
-      rw [HZH_eq_X']
-      simp only [nsmul_eq_mul, Nat.cast_ofNat, smul_eq_mul]
-
-
-theorem s_eq_zero : QZero * H * Z ^ Bool.toNat false * H = 2 • QZero * X ^ Bool.toNat false := by
+theorem sᵢ_eq_zero : QZero * H * Z ^ Bool.toNat false * H = 2 • QZero * X ^ Bool.toNat false := by
   rw [QZero, H, Bool.toNat_false, pow_zero]
   norm_num
 
 
-theorem s_eq_one : QZero * H * Z ^ Bool.toNat true * H = 2 • QZero * X ^ Bool.toNat true := by
+theorem sᵢ_eq_one : QZero * H * Z ^ Bool.toNat true * H = 2 • QZero * X ^ Bool.toNat true := by
   rw [QZero, Bool.toNat_true, Z, X, H]
   norm_num [pow_one]
 
 
-theorem BernsteinVaziraniAlgorithm' (s : ℕ -> Bool) : QZeroₙ n * Hₙ n * (tensor_power n (Oracle_s s)) * Hₙ n = tensor_power n (Outcome s) := by
+theorem BernsteinVaziraniAlgorithm' (s : ℕ -> Bool) : QZeroₙ n * Hₙ n * (tensor_power n (Oracleₛ s)) * Hₙ n = tensor_power n (Outcome s) := by
   rw [QZeroₙ, Hₙ, tensor_power_mul_tensor_power, tensor_power_mul_tensor_power, tensor_power_mul_tensor_power]
   induction n with
     | zero => rw [Nat.zero_eq, tensor_power, tensor_power]
     | succ n ih =>
-      rw [tensor_power, Oracle_s, Oracle, tensor_power, Outcome]
+      rw [tensor_power, Oracleₛ, Oracle, tensor_power, Outcome]
       cases (s (n + 1));
-      rw [ih, s_eq_zero]
-      rw [ih, s_eq_one]
+      rw [ih, sᵢ_eq_zero]
+      rw [ih, sᵢ_eq_one]
 
 end BernsteinVazirani
 
