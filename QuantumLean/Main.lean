@@ -60,10 +60,10 @@ theorem BernsteinVaziraniAlgorithm (s : ℕ -> Bool) : QZeroₙ n * (Hₙ n * (t
       rw [tensor_power, tensor_power]
       -- (tensor_power n fun i ↦ QZero * (H * Oracleₛ s i * H)) ⊗ₖ (Oracleₛ s i * H)
       -- = (tensor_power n (Outcome s)) ⊗ₖ (Outcome s (n + 1))
-      rw [Oracleₛ, Oracle, Outcome]
+      rw [ih, Oracleₛ, Oracle, Outcome]
       cases (s (n + 1));
-      rw [ih, sᵢ_eq_zero]
-      rw [ih, sᵢ_eq_one]
+      rw [sᵢ_eq_zero]
+      rw [sᵢ_eq_one]
 
 end BernsteinVazirani
 
@@ -88,37 +88,28 @@ section OneOfFourGrover
 abbrev sType := Fin 4
 
 
-@[simp]
 def Oracle (s : sType) : sType -> ℂ := fun n => (-1) ^ ((s == n).toNat)
 
 /-- s is a number from 1 to 4 -/
-def Oracleₛ (s : sType) : nMatrix 2 := !![Oracle s 0, 0, 0, 0; 0, Oracle s 1, 0, 0; 0, 0, Oracle s 2, 0; 0, 0, 0, Oracle s 3]
-
-@[simp]
-def O_final (s n : sType) : ℂ := 4 • (s == n).toNat
-
-
-@[simp]
-def Oracle_final (s : sType) : Qubit 2 := !![O_final s 0, O_final s 1, O_final s 2, O_final s 3]
-def Oracle_final' (s : sType) : Qubit 2 := Q (O_final s)
+def Oracleₛ (s : sType) : nMatrix 2 :=
+  !![Oracle s 0,          0,          0,          0;
+              0, Oracle s 1,          0,          0;
+              0,          0, Oracle s 2,          0;
+              0,          0,          0, Oracle s 3]
 
 
-theorem O_eq_O {s : sType} : Oracle_final s = Oracle_final' s := by
-  simp [Oracle_final, Oracle_final']
-  ext i j
-  fin_cases i; fin_cases j <;> simp [Q]
+def Outcomeᵢ (s n : sType) : ℂ := 4 • (s == n).toNat
+def Outcome (s : sType) : Qubit 2 := !![Outcomeᵢ s 0, Outcomeᵢ s 1, Outcomeᵢ s 2, Outcomeᵢ s 3]
 
 
-theorem OneOfFourGrover (s : sType) : Q₀ * H₂ * Oracleₛ s * X₂ * H₁ * CX * H₁ = Oracle_final' s := by
-  rw [Q₀, H₂, X₂, Oracleₛ, H₁, CX, ← O_eq_O, Oracle_final]
-  simp only [QCount, Nat.pow_zero, nMatrix, nMatrix', Oracle, Fin.isValue, cons_mul, vecMul_cons,
-    head_cons, one_smul, tail_cons, empty_vecMul, add_zero, add_cons, zero_add, empty_add_empty,
-    neg_smul, neg_cons, neg_zero, neg_empty, empty_mul, Equiv.symm_apply_apply, smul_cons,
-    smul_eq_mul, mul_zero, mul_one, smul_empty, mul_neg, neg_neg, neg_add_rev, O_final,
-    Fin.reduceBEq, Bool.toNat_false, CharP.cast_eq_zero, beq_self_eq_true, Bool.toNat_true,
-    Nat.cast_ofNat]
-  -- norm_num
-  fin_cases s <;> simp <;> norm_num
+theorem OneOfFourGrover (s : sType) : Q₀ * H₂ * Oracleₛ s * X₂ * H₁ * CX * H₁ = Outcome s := by
+  rw [Q₀, H₂, Oracleₛ, X₂, H₁, CX, Outcome]
+  norm_num [Oracle]
+  fin_cases s <;> {
+    -- Turn the finite case objects into its natural number values
+    simp only [Fin.reduceFinMk, Fin.isValue, Fin.reduceBEq, Bool.toNat_false, pow_zero, beq_self_eq_true, Bool.toNat_true, pow_one, add_left_neg, add_right_neg, add_zero, neg_neg, Outcomeᵢ]
+    norm_num
+  }
 
 
 def F2F2_eq_F4 : ((Fin 2) × (Fin 2)) ≃ Fin 4 := by
