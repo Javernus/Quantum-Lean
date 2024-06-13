@@ -38,20 +38,20 @@ namespace BernsteinVazirani
 
 def Oracle (sᵢ : Bool) : nMatrix 1 := Z ^ sᵢ.toNat
 def Oracleₛ (s : ℕ -> Bool) : (i : ℕ) -> nMatrix 1 := fun i => Oracle (s i)
-def Outcome (s : ℕ -> Bool) : (i : ℕ) -> Qubit 1 := fun i => 2 • QZero * X ^ (s i).toNat
+def Outcome (s : ℕ -> Bool) : (i : ℕ) -> Qubit 1 := fun i => QZero * 2 • X ^ (s i).toNat
 
 
-theorem sᵢ_eq_zero : QZero * H * Z ^ Bool.toNat false * H = 2 • QZero * X ^ Bool.toNat false := by
-  rw [QZero, H, Bool.toNat_false, pow_zero]
-  norm_num
+theorem sᵢ_eq_zero : H * Z ^ Bool.toNat false * H = 2 • X ^ Bool.toNat false := by
+  rw [Bool.toNat_false, pow_zero, mul_one, H_Identity, pow_zero, @nsmul_one]
 
 
-theorem sᵢ_eq_one : QZero * H * Z ^ Bool.toNat true * H = 2 • QZero * X ^ Bool.toNat true := by
-  rw [QZero, Bool.toNat_true, Z, X, H]
-  norm_num [pow_one]
+theorem sᵢ_eq_one : (H * Z ^ Bool.toNat true * H) = 2 • X ^ Bool.toNat true := by
+  rw [Bool.toNat_true]
+  simp only [pow_one]
+  exact HZH_eq_X'
 
 
-theorem BernsteinVaziraniAlgorithm' (s : ℕ -> Bool) : QZeroₙ n * Hₙ n * (tensor_power n (Oracleₛ s)) * Hₙ n = tensor_power n (Outcome s) := by
+theorem BernsteinVaziraniAlgorithm' (s : ℕ -> Bool) : QZeroₙ n * (Hₙ n * (tensor_power n (Oracleₛ s)) * Hₙ n) = tensor_power n (Outcome s) := by
   rw [QZeroₙ, Hₙ, tensor_power_mul_tensor_power, tensor_power_mul_tensor_power, tensor_power_mul_tensor_power]
   induction n with
     | zero => rw [Nat.zero_eq, tensor_power, tensor_power]
