@@ -21,13 +21,12 @@ def H₁ : nMatrix 2 := !![1, 0, 1, 0; 0, 1, 0, 1; 1, 0, -1, 0; 0, 1, 0, -1]
 def IH : nMatrix 2 := !![1, 1, 0, 0; 1, -1, 0, 0; 0, 0, 1, 1; 0, 0, 1, -1]
 def H₂ : nMatrix 2 := !![1, 1, 1, 1; 1, -1, 1, -1; 1, 1, -1, -1; 1, -1, -1, 1]
 def Hₙ (n : ℕ) := tensor_power' n H
-def Hᵢ (n i : ℕ) := tensor_power n (fun j => if i == j then H else 1)
+def Hᵢ (n i : ℕ) := apply_at n i H
 
 
 theorem H_Identity : H * H = (2 : ℕ) := by
-  simp [H, mul_apply, ofNat_fin_two]
-  norm_num
-
+  norm_num [H]
+  simp only [ofNat_fin_two]
 
 theorem H_mul_H : Hₙ n * Hₙ n = (2 ^ n : ℕ) := by
   rw [Hₙ, ← tensor_power_mul, @Pi.mul_def, H_Identity, tensor_power_of_natCast]

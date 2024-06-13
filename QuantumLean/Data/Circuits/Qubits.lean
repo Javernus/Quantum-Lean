@@ -18,6 +18,7 @@ abbrev Qubit (n : ℕ) := nMatrix' 0 n
 
 
 /-- A vector with values of s n -/
-def Q (n : ℕ) (s : ℕ -> ℂ) : Qubit n := of fun _ i => s i
+-- def Q (n : ℕ) (s : ℕ -> ℂ) : Qubit n := of fun _ i => s i
+def Q {n : ℕ} (s : QCount n -> ℂ) : Qubit n := of fun _ i => s i
 def Q' (n : ℕ) (s : ℂ) : Qubit n := of fun _ _ => s
-def Q₁ : Qubit 2 := !![1, 0, 0, 0]
+def Q₀ : Qubit 2 := !![1, 0, 0, 0]

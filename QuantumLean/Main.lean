@@ -20,46 +20,17 @@ open Kronecker
 open Circuits
 
 
-section CircuitLemmas
-variable { n : ℕ }
-
-
-theorem HZH_eq_X' : H * Z * H = 2 • X := by
-  rw [H, Z, X]
-  norm_num
-
-
-theorem HZH_eq_X : Hₙ n * Zₙ n * Hₙ n = (2 ^ n : ℕ) • Xₙ n := by
-  rw [Hₙ, Zₙ, ← tensor_power_mul, ← tensor_power_mul]
-  nth_rw 2 [@Pi.mul_def]
-  rw [@Pi.mul_def, HZH_eq_X', tensor_power_smul, Xₙ]
-
-
-theorem HXHeqZ' : H * X * H = 2 • Z := by
-  rw [H, X, Z]
-  norm_num
-
-
-theorem HXHeqZ : Hₙ n * Xₙ n * Hₙ n = (2 ^ n : ℕ) • Zₙ n := by
-  rw [Hₙ, Xₙ, ← tensor_power_mul, ← tensor_power_mul]
-  nth_rw 2 [@Pi.mul_def]
-  rw [@Pi.mul_def, HXHeqZ', tensor_power_smul, Zₙ]
-
-end CircuitLemmas
-
-
 namespace Deutsch
 
 
-def Oracle (a b : Bool) : nMatrix 1 := !![a.toNat, 0; 0, b.toNat]
-def Bool_eq (a b : Bool) : ℕ := (a == b).toNat
-def D_final (a b : Bool) : nMatrix 1 := !![a.toNat + b.toNat, a.toNat - b.toNat; a.toNat - b.toNat, a.toNat + b.toNat]
+def Oracle (a b : Bool) : nMatrix 1 := !![(-1) ^ a.toNat, 0; 0, (-1) ^ b.toNat]
+def D_final (a b : Bool): Qubit 1 := !![(-1) ^ a.toNat + (-1) ^ b.toNat, (-1) ^ a.toNat - (-1) ^ b.toNat]
+def ZeroQubit : Qubit 1 := !![1, 0]
 
 
-theorem DeutschAlgorithm (a b : Bool) : H * (Oracle a b) * H = D_final a b := by
-  rw [H, Oracle, D_final]
-  norm_num
-  rfl
+theorem DeutschAlgorithm (a b : Bool) : ZeroQubit * H * (Oracle a b) * H = D_final a b := by
+  rw [ZeroQubit, H, Oracle, D_final]
+  fin_cases a <;> fin_cases b <;> norm_num
 
 
 end Deutsch
@@ -114,19 +85,22 @@ def Oracle (s : sType) : sType -> ℂ := fun n => (-1) ^ ((s == n).toNat)
 def Oracleₛ (s : sType) : nMatrix 2 := !![Oracle s 0, 0, 0, 0; 0, Oracle s 1, 0, 0; 0, 0, Oracle s 2, 0; 0, 0, 0, Oracle s 3]
 
 @[simp]
-def O_final (s n : sType) : ℕ := 4 • (s == n).toNat
+def O_final (s n : sType) : ℂ := 4 • (s == n).toNat
 
-/-- Order of 0, 2, 1, 3 because of tensor:
-    |0⟩|0⟩ = |00⟩ = (1, 0) ⊗ₖ (1, 0) = (1, 0, 0, 0)
-    |0⟩|1⟩ = |01⟩ = (1, 0) ⊗ₖ (0, 1) = (0, 1, 0, 0)
-    |1⟩|0⟩ = |10⟩ = (0, 1) ⊗ₖ (1, 0) = (0, 0, 1, 0)
-    |1⟩|1⟩ = |11⟩ = (0, 1) ⊗ₖ (0, 1) = (0, 0, 0, 1) -/
+
 @[simp]
 def Oracle_final (s : sType) : Qubit 2 := !![O_final s 0, O_final s 1, O_final s 2, O_final s 3]
+def Oracle_final' (s : sType) : Qubit 2 := Q (O_final s)
 
 
-theorem OneOfFourGrover (s : sType) : Q₁ * H₂ * Oracleₛ s * X₂ * H₁ * CX * H₁ = Oracle_final s := by
-  rw [Q₁, H₂, X₂, Oracleₛ, H₁, CX, Oracle_final]
+theorem O_eq_O {s : sType} : Oracle_final s = Oracle_final' s := by
+  simp [Oracle_final, Oracle_final']
+  ext i j
+  fin_cases i; fin_cases j <;> simp [Q]
+
+
+theorem OneOfFourGrover (s : sType) : Q₀ * H₂ * Oracleₛ s * X₂ * H₁ * CX * H₁ = Oracle_final' s := by
+  rw [Q₀, H₂, X₂, Oracleₛ, H₁, CX, ← O_eq_O, Oracle_final]
   simp only [QCount, Nat.pow_zero, nMatrix, nMatrix', Oracle, Fin.isValue, cons_mul, vecMul_cons,
     head_cons, one_smul, tail_cons, empty_vecMul, add_zero, add_cons, zero_add, empty_add_empty,
     neg_smul, neg_cons, neg_zero, neg_empty, empty_mul, Equiv.symm_apply_apply, smul_cons,
@@ -135,6 +109,30 @@ theorem OneOfFourGrover (s : sType) : Q₁ * H₂ * Oracleₛ s * X₂ * H₁ * 
     Nat.cast_ofNat]
   -- norm_num
   fin_cases s <;> simp <;> norm_num
+
+
+def F2F2_eq_F4 : ((Fin 2) × (Fin 2)) ≃ Fin 4 := by
+  exact @finProdFinEquiv 2 2
+
+
+def rei (A : Matrix ((Fin 2) × (Fin 2)) ((Fin 2) × (Fin 2)) ℤ) : Matrix (Fin 4) (Fin 4) ℤ :=
+  Matrix.reindex F2F2_eq_F4 F2F2_eq_F4 A
+
+def nI : Matrix (Fin 2) (Fin 2) ℤ := !![1, 0; 0, 1]
+def nX : Matrix (Fin 2) (Fin 2) ℤ := !![0, 1; 1, 0]
+def nH : Matrix (Fin 2) (Fin 2) ℤ := !![1, 1; 1, -1]
+def nCX : Matrix (Fin 4) (Fin 4) ℤ := !![1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 0, 1; 0, 0, 1, 0]
+def nCZ : Matrix (Fin 4) (Fin 4) ℤ := !![1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 1, 0; 0, 0, 0, -1]
+def Q0 : Matrix (Fin 4) (Fin 1) ℤ := !![1; 0; 0; 0]
+def Q0' : Matrix (Fin 1) (Fin 4) ℤ := !![1, 0, 0, 0]
+
+#eval Q0' * rei (nH ⊗ₖ nH) * rei (nX ⊗ₖ nX) * nCZ * rei (nX ⊗ₖ nX) * rei (nX ⊗ₖ nX) * rei (nH ⊗ₖ nI) * nCX * rei (nH ⊗ₖ nI)
+#eval rei (nH ⊗ₖ nI) * nCX * rei (nH ⊗ₖ nI) * rei (nX ⊗ₖ nX) * rei (nX ⊗ₖ nX) * nCZ * rei (nX ⊗ₖ nX) * rei (nH ⊗ₖ nH) * Q0
+#eval rei (nX ⊗ₖ nX) * nCZ * rei (nX ⊗ₖ nX)
+#eval rei (nH ⊗ₖ nI)
+
+  -- fin_cases s <;> norm_num
+
 
 
 end OneOfFourGrover

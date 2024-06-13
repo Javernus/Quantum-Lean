@@ -165,22 +165,19 @@ theorem smul_reindex₃ (c : ℕ) (A : mnMatrix (m * n) m) : reindex₃ (c • A
 @[simp]
 theorem reindex₁_natCast { i : ℕ } : reindex₁ (i : mnMatrix m n) = i := by
   nth_rewrite 1 [← mul_one i]
-  rw [@Nat.cast_mul, ← @nsmul_eq_mul, smul_reindex₁, @Nat.cast_one, reindex₁_one]
-  norm_num
+  rw [@Nat.cast_mul, ← @nsmul_eq_mul, smul_reindex₁, @Nat.cast_one, reindex₁_one, nsmul_eq_mul, mul_one]
 
 
 @[simp]
 theorem reindex₂_natCast { i : ℕ } : reindex₂ (i : nMatrix (m * 1)) = i := by
   nth_rewrite 1 [← mul_one i]
-  rw [@Nat.cast_mul, ← @nsmul_eq_mul, smul_reindex₂, @Nat.cast_one, reindex₂_one]
-  norm_num
+  rw [@Nat.cast_mul, ← @nsmul_eq_mul, smul_reindex₂, @Nat.cast_one, reindex₂_one, nsmul_eq_mul, mul_one]
 
 
 @[simp]
 theorem reindex₃_natCast { i : ℕ } : reindex₃ (i : mnMatrix (m * n) m) = i := by
   nth_rewrite 1 [← mul_one i]
-  rw [@Nat.cast_mul, ← @nsmul_eq_mul, smul_reindex₃, @Nat.cast_one, reindex₃_one]
-  norm_num
+  rw [@Nat.cast_mul, ← @nsmul_eq_mul, smul_reindex₃, @Nat.cast_one, reindex₃_one, nsmul_eq_mul, mul_one]
 
 
 -- theorem reindex₁_eq (A : mnMatrix m n) : reindex₁ A = A := by

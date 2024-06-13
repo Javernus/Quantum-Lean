@@ -18,7 +18,7 @@ def XC : nMatrix 2 := !![1, 0, 0, 0; 0, 0, 0, 1; 0, 0, 1, 0; 0, 1, 0, 0]
 def CXₙ (n : ℕ) := tensor_power' n CX
 
 
-theorem CXₙ_Identity : (CX * CX) = (1 : ℕ) := by
+theorem CX_Identity : (CX * CX) = (1 : ℕ) := by
   simp [CX]
 
   -- rw [← @diagonal_one]
@@ -26,7 +26,7 @@ theorem CXₙ_Identity : (CX * CX) = (1 : ℕ) := by
   fin_cases i <;> fin_cases j <;> rfl
 
 
-theorem XCₙ_Identity : (XC * XC) = (1 : ℕ) := by
+theorem XC_Identity : (XC * XC) = (1 : ℕ) := by
   simp [XC]
 
   -- rw [← @diagonal_one]
@@ -35,7 +35,7 @@ theorem XCₙ_Identity : (XC * XC) = (1 : ℕ) := by
 
 
 theorem CX_mul_CX : (CXₙ n) * (CXₙ n) = (1 : ℕ) := by
-  rw [CXₙ, ← tensor_power_mul, @Pi.mul_def, CXₙ_Identity, tensor_power_of_natCast, one_pow]
+  rw [CXₙ, ← tensor_power_mul, @Pi.mul_def, CX_Identity, tensor_power_of_natCast, one_pow]
 
 
 -- Make it n-qubit with props for control qubit and affected qubit(s?)
@@ -43,7 +43,7 @@ def CZ : nMatrix 2 := !![1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 1, 0; 0, 0, 0, -1]
 def CZₙ (n : ℕ) := tensor_power' n CZ
 
 
-theorem CZₙ_Identity : (CZ * CZ) = (1 : ℕ) := by
+theorem CZ_Identity : (CZ * CZ) = (1 : ℕ) := by
   simp [CZ]
 
   -- rw [← @diagonal_one]
@@ -52,7 +52,7 @@ theorem CZₙ_Identity : (CZ * CZ) = (1 : ℕ) := by
 
 
 theorem CZ_mul_CZ : (CZₙ n) * (CZₙ n) = (1 : ℕ) := by
-  rw [CZₙ, ← tensor_power_mul, @Pi.mul_def, CZₙ_Identity, tensor_power_of_natCast, one_pow]
+  rw [CZₙ, ← tensor_power_mul, @Pi.mul_def, CZ_Identity, tensor_power_of_natCast, one_pow]
 
 
 def SWAP : nMatrix 2 := CX * XC * CX
