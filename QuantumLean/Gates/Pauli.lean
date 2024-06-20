@@ -1,22 +1,19 @@
-import Mathlib.Data.Matrix.Basic
-import Mathlib.Data.Matrix.Notation
-import Mathlib.Data.Matrix.Kronecker
-import Mathlib.Data.Complex.Basic
-
-import «QuantumLean».Data.Circuits.Basic
-import «QuantumLean».Data.Circuits.VariableDimensions
+import «QuantumLean».Data.Circuits.Reindex
+import «QuantumLean».Data.Circuits.TensorPower
 import «QuantumLean».Data.Matrix.Kronecker
 import «QuantumLean».Gates.Hadamard
 
-open Matrix
 open Kronecker
 open Complex
 open Circuits
 
+
+namespace Gates
 section Pauli
+
 variable { n : ℕ }
 
-section Xₙ
+section Xn
 
 def X : nMatrix 1 := !![0, 1; 1, 0]
 def X₂ : nMatrix 2 := !![0, 0, 0, 1; 0, 0, 1, 0; 0, 1, 0, 0; 1, 0, 0, 0]
@@ -33,8 +30,8 @@ theorem X_mul_X : (Xₙ n) * (Xₙ n) = (1 : ℕ) := by
   rw [Xₙ, tensor_power_mul, X_Identity, tensor_power_of_natCast, one_pow]
 
 
-end Xₙ
-section Yₙ
+end Xn
+section Yn
 
 
 def Y : nMatrix 1 := !![0, -I; I, 0]
@@ -51,8 +48,8 @@ theorem Y_mul_Y : (Yₙ n) * (Yₙ n) = (1 : ℕ) := by
   rw [Yₙ, tensor_power_mul, Y_Identity, tensor_power_of_natCast, one_pow]
 
 
-end Yₙ
-section Zₙ
+end Yn
+section Zn
 
 
 def Z : nMatrix 1 := !![1, 0; 0, -1]
@@ -68,10 +65,15 @@ theorem Z_Identity : (Z * Z) = (1 : ℕ) := by
 theorem Z_mul_Z : (Zₙ n) * (Zₙ n) = (1 : ℕ) := by
   rw [Zₙ, tensor_power_mul, Z_Identity, tensor_power_of_natCast, one_pow]
 
-end Zₙ
+end Zn
 end Pauli
+end Gates
 
-section CircuitLemmas
+
+namespace Equivalences
+
+open Gates
+
 variable { n : ℕ }
 
 
@@ -93,4 +95,4 @@ theorem HZHeqX : Hₙ n * Zₙ n * Hₙ n = (2 ^ n : ℕ) • Xₙ n := by
   rw [Hₙ, Zₙ, tensor_power_mul, tensor_power_mul, HZHeqX', tensor_power_smul, Xₙ]
 
 
-end CircuitLemmas
+end Equivalences

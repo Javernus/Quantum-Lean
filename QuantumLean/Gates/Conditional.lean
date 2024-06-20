@@ -1,16 +1,13 @@
-import Mathlib.Data.Matrix.Basic
-import Mathlib.Data.Matrix.Notation
-import Mathlib.Data.Matrix.Kronecker
-
-import «QuantumLean».Data.Circuits.Basic
-import «QuantumLean».Data.Circuits.VariableDimensions
+import «QuantumLean».Data.Circuits.Reindex
+import «QuantumLean».Data.Circuits.TensorPower
 import «QuantumLean».Gates.Hadamard
 
-open Matrix
 open Kronecker
 open Circuits
 
+namespace Gates
 section CNOT
+
 
 -- Make it n-qubit with props for control qubit and affected qubit(s?)
 def CX : nMatrix 2 := !![1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 0, 1; 0, 0, 1, 0]
@@ -63,4 +60,6 @@ theorem SWAP_mul_SWAP : SWAP * SWAP = (1 : ℕ) := by
   ext i j
   fin_cases i <;> fin_cases j <;> rfl
 
+
 end CNOT
+end Gates

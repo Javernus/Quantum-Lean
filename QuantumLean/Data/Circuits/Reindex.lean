@@ -1,36 +1,16 @@
-import Lean.Meta.Tactic.LibrarySearch
-import Aesop.Main
--- import LeanCopilot
-
 import Mathlib.Data.Matrix.Basic
 import Mathlib.Data.Matrix.Notation
 import Mathlib.Data.Matrix.Kronecker
 import Mathlib.Data.Complex.Basic
-import Mathlib.Tactic.ProdAssoc
 
+import «QuantumLean».Data.Circuits.Abbreviations
 
 open Matrix
-open Kronecker
 
 namespace Circuits
-
 section Reindex
+
 variable { m m' n n' o o' : ℕ }
-
-
--- Num of qubits
-@[simp]
-abbrev QCount (n : ℕ) := Fin (2 ^ n)
-
-@[simp]
-abbrev nMatrix' (n n' : ℕ) := Matrix (QCount n) (QCount n') ℂ
-@[simp]
-abbrev mnMatrix' (m m' n n' : ℕ) := Matrix (QCount m × QCount n) (QCount m' × QCount n') ℂ
-
-@[simp]
-abbrev nMatrix (n : ℕ) := nMatrix' n n
-@[simp]
-abbrev mnMatrix (m n : ℕ) := mnMatrix' m m n n
 
 
 @[simp]
@@ -65,6 +45,13 @@ def QCount_assoc : (QCount (m * n * o)) ≃ QCount (m * (n * o)) := by
   rw [@Mathlib.Tactic.RingNF.mul_assoc_rev]
 
 
+@[simp]
+def QCount_mul_add : (QCount (m * n) × QCount (m * o)) ≃ QCount (m * (n + o)) := by
+  simp [QCount]
+  rw [Nat.mul_add, Nat.pow_add]
+  exact @finProdFinEquiv (2 ^ (m * n)) (2 ^ (m * o))
+
+
 /-- Reindex a circuit matrix to Fin 2 ^ n × Fin 2 ^ n dimensions -/
 @[simp]
 def reindex₁ (A : mnMatrix' m m' n n') : nMatrix' (m + n) (m' + n') :=
@@ -84,6 +71,11 @@ def reindex₃ (A : mnMatrix' (m * n) (m' * n) m m') : nMatrix' (m * (n + 1)) (m
 @[simp]
 def reindex₄ (A : nMatrix' (m * n * o) (m' * n * o)) : nMatrix' (m * (n * o)) (m' * (n * o)) :=
   Matrix.reindex QCount_assoc QCount_assoc A
+
+
+@[simp]
+def reindex₅ (A : mnMatrix' (m * n) (m' * n) (m * o) (m' * o)) : nMatrix' (m * (n + o)) (m' * (n + o)) :=
+  Matrix.reindex QCount_mul_add QCount_mul_add A
 
 
 @[simp]
@@ -118,6 +110,14 @@ theorem reindex₄_one : reindex₄ (1 : nMatrix (m * n * o)) = 1 := by
   simp only [QCount, EmbeddingLike.apply_eq_iff_eq]
 
 
+@[simp]
+theorem reindex₅_one : reindex₅ (1 : mnMatrix (m * n) (m * o)) = 1 := by
+  ext i j
+  rw [reindex₅, reindex_apply, submatrix_apply]
+  simp_rw [← diagonal_one, diagonal_apply]
+  simp only [QCount, EmbeddingLike.apply_eq_iff_eq]
+
+
 /-- Prove linearity in multiplication -/
 @[simp]
 theorem reindex₁_mul (A : mnMatrix' m m' n n') (B : mnMatrix' m' o n' o')
@@ -139,6 +139,11 @@ theorem reindex₃_mul (A : mnMatrix' (m * n) (m' * n) m m') (B : mnMatrix' (m' 
 @[simp]
 theorem reindex₄_mul (A : mnMatrix' (m * n) (m' * n) m m') (B : mnMatrix' (m' * n) (o * n) m' o) : reindex₃ (A * B) = reindex₃ A * reindex₃ B :=
   Matrix.submatrix_mul _ _ _ _ _ (QCount_mul_succ_n.symm.bijective)
+
+
+@[simp]
+theorem reindex₅_mul (A : mnMatrix' (m * n) (m' * n) (m * o) (m' * o)) (B : mnMatrix' (m' * n) (o' * n) (m' * o) (o' * o)) : reindex₅ (A * B) = reindex₅ A * reindex₅ B :=
+  Matrix.submatrix_mul _ _ _ _ _ (QCount_mul_add.symm.bijective)
 
 
 @[simp]
@@ -180,22 +185,5 @@ theorem reindex₃_natCast { i : ℕ } : reindex₃ (i : mnMatrix (m * n) m) = i
   rw [@Nat.cast_mul, ← @nsmul_eq_mul, smul_reindex₃, @Nat.cast_one, reindex₃_one, nsmul_eq_mul, mul_one]
 
 
--- theorem reindex₁_eq (A : mnMatrix m n) : reindex₁ A = A := by
---   simp only [reindex₁, reindex_apply]
---   rw [submatrix_smul]
---   rfl
-
-
--- theorem reindex₂_eq (A : nMatrix (m * 1)) : reindex₂ A = A := by
---   simp only [reindex₂, reindex_apply]
---   rw [submatrix_smul]
---   rfl
-
-
--- theorem reindex₃_eq (A : mnMatrix (m * n) m) : reindex₃ A = A := by
---   simp only [reindex₃, reindex_apply]
---   rw [submatrix_smul]
---   rfl
-
-
 end Reindex
+end Circuits

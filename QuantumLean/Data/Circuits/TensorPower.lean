@@ -1,12 +1,8 @@
--- import Lean.Meta.Tactic.LibrarySearch
--- import Aesop.Main
-
 import Mathlib.Data.Matrix.Basic
 import Mathlib.Data.Matrix.Notation
 import Mathlib.Data.Complex.Basic
 
--- Import the gates
-import «QuantumLean».Data.Circuits.Basic
+import «QuantumLean».Data.Circuits.Reindex
 import «QuantumLean».Data.Matrix.Kronecker
 
 open Matrix
@@ -15,10 +11,10 @@ open Kronecker
 open Circuits
 
 
-section VariableDimensions
+namespace Circuits
+section TensorPower
 
-
-variable {m m' n n' : ℕ}
+variable {m m' n n' o : ℕ}
 
 
 @[simp]
@@ -30,62 +26,13 @@ def tensor_power (n : ℕ) (gates : ℕ -> nMatrix' m m') : nMatrix' (m * n) (m'
 
 abbrev tensor_power' (n : ℕ) (M : nMatrix' m m') := tensor_power n (fun _ => M)
 
--- Not the best definition due to it only working well for 1 qubit gates
+
+-- Only functions properly for 1 qubit gates
 abbrev apply_at (n i : ℕ) (M : nMatrix m) := tensor_power n (fun j => if i == j then M else 1)
+
 
 theorem tensor_power_zero { gates : ℕ -> nMatrix' m m' } : tensor_power 0 gates = !![1] := by
   simp [tensor_power]
-
-
--- theorem reindex_tensor {m m' : ℕ} {A : nMatrix' m m'} : reindex₂ (reindex₃ (reindex (Equiv.uniqueProd (Fin (2 ^ m)) (Fin 1)).symm (Equiv.uniqueProd (Fin (2 ^ m')) (Fin 1)).symm A)) = A := by
---   simp [reindex₂, reindex₃]
---   induction m with
---     | zero =>
---     induction m' with
---       | zero =>
---         simp [Nat.zero_eq, Nat.pow_zero]
---         ext i j
---         fin_cases i <;> fin_cases j <;> rfl
---       | succ m ih₁ =>
---         ext i j
---         fin_cases i
---         rw?
-
-
-
--- theorem tensor_power_one {m m' : ℕ} { gates : ℕ -> nMatrix' m m' } : reindex₂ (tensor_power 1 gates) = gates 1 := by
---   simp
---   rw [kronecker_matOne]
---   simp only [reindex_apply, Equiv.symm_symm, Equiv.coe_uniqueProd]
---   simp [reindex₂, reindex₃, QCount]
---   induction m with
---     | zero =>
---       induction m' with
---         | zero =>
---           simp only [Nat.zero_eq, Nat.pow_zero]
---           ext i j
---           fin_cases i <;> fin_cases j <;> rfl
---         | succ m' ih₁ =>
---           simp only [Nat.zero_eq, Nat.pow_zero]
---           rw [ih₁]
-
---     | succ m ih =>
-
---     ext i j <;> fin_cases i <;> fin_cases j <;> rfl
-
-
-theorem tensor_power_mul' (M N : ℕ -> nMatrix m)
-  : tensor_power n (M * N) = tensor_power n M * tensor_power n N := by
-  induction n with
-    | zero => simp
-    | succ n ih =>
-      rw [tensor_power]
-      rw [tensor_power]
-      rw [tensor_power]
-      rw [← reindex₃_mul]
-      rw [← mul_kronecker_mul]
-      rw [ih]
-      rw [← @Pi.mul_apply]
 
 
 theorem one_eq' : !![1] = (1 :  nMatrix' (m * Nat.zero) (m * Nat.zero)) := by
@@ -132,16 +79,24 @@ theorem tensor_power_mul (M : ℕ -> nMatrix' m m') (N : ℕ -> nMatrix' m' o)
       rw [ih]
 
 
--- theorem tensor_power_slice { m m' n o : ℕ } (M : nMatrix' m m')
---   : tensor_power' (n * o) M = reindex₄ (tensor_power' o (tensor_power' n M)) := by
---   rw [tensor_power', tensor_power', tensor_power']
---   induction n with
---     | zero =>
---       rw [@tensor_power_zero]
---       simp only [Nat.zero_eq, Nat.mul_zero]
+-- tensor_power 1 of any gate is equivalent to that gate
+theorem tensor_power_one {m m' : ℕ} { gates : ℕ -> nMatrix' m m' } :
+    reindex₂ (tensor_power 1 gates) = gates 1 := by
+  sorry
 
 
+-- Slice a tensor power in two pieces
+theorem tensor_power_slice (gates : ℕ -> nMatrix' m m') :
+    tensor_power (n + o) gates =
+    reindex₅ (tensor_power n gates ⊗ₖ tensor_power o (fun i => gates (n + i))) :=  by
+  sorry
 
 
+-- Turn a single tensor_power' into a tensor_power' of a tensor_power'
+theorem tensor_power_of_tensor_power (M : nMatrix' m m') :
+    tensor_power' (n * o) M = reindex₄ (tensor_power' o (tensor_power' n M)) := by
+  sorry
 
-end VariableDimensions
+
+end TensorPower
+end Circuits

@@ -1,14 +1,25 @@
-import Mathlib.Data.Matrix.Basic
 import Mathlib.Data.Matrix.Notation
 import Mathlib.Data.Matrix.Kronecker
-import Mathlib.Data.Complex.Basic
-import Mathlib.Logic.Equiv.Fin
 
-import «QuantumLean».Data.Circuits.Basic
+import «QuantumLean».Data.Circuits.Reindex
 
 open Matrix
 open Kronecker
-open Complex
+
+
+/-
+The Kronecker product is part of `mathlib`, but missed some key theorems on the handling of natural numbers.
+This file contains the theorems that show equivalences.
+
+For the following descriptions, assume D to be a diagonal matrix with value d on its diagonal. M is an
+arbitrary matrix. 1 is an arbitrary size identity matrix.
+
+- natCast_kronecker: prove that D ⊗ₖ M = d * (1 ⊗ₖ M) where 1 is identical in size to D.
+- kronecker_natCast: prove that M ⊗ₖ D = d * (M ⊗ₖ 1) where 1 is identical in size to D.
+- kronecker_natCast_natCast: prove that D ⊗ₖ D' = d * d' * (1 ⊗ₖ 1') where 1 is identical in size to D and 1' to D'.
+- kronecker_natOne: prove 1 ⊗ₖ M = M for a 1x1 matrix 1.
+- kronecker_matOne: prove !![1] ⊗ₖ M = M.
+-/
 
 
 namespace Matrix

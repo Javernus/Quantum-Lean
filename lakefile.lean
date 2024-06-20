@@ -19,5 +19,3 @@ require mathlib from git
 @[default_target]
 lean_lib «QuantumLean» where
   -- add any library configuration options here
-
-require LeanCopilot from git "https://github.com/lean-dojo/LeanCopilot.git" @ "v1.1.1"
