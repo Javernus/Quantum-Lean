@@ -7,6 +7,26 @@ open Kronecker
 open Complex
 open Circuits
 
+/-
+The Pauli gates. This file contains a set of definitions regarding the Pauli gates:
+
+- X/Y/Z: the single qubit Pauli gates.
+- XX: a shorthand for X ⊗ₖ X.
+- Xₙ/Yₙ/Zₙ: the n-qubit tensor power of X.
+- Xᵢ/Yᵢ/Zᵢ: X/Y/Z applied only to qubit i.
+
+This file also contains the identity theorem for Pauli gates.
+
+- X/Y/Z_Identity: the identity for the single-qubit gate definitions.
+- X_mul_X/Y_mul_Y/Z_mul_Z: the identity for the Xₙ/Yₙ/Zₙ definitions.
+
+Finally, we have circuit equivalences proven, as well.
+
+- HXHeqZ': Proves H * X * H = Z for single-qubit gates.
+- HXHeqZ: Proves H * X * H = Z for single-qubit gates.
+- HZHeqX': Proves Hₙ * Zₙ * Hₙ = Xₙ.
+- HZHeqX: Proves Hₙ * Zₙ * Hₙ = Xₙ.
+-/
 
 namespace Gates
 section Pauli
@@ -15,8 +35,8 @@ variable { n : ℕ }
 
 section Xn
 
-def X : nMatrix 1 := !![0, 1; 1, 0]
-def X₂ : nMatrix 2 := !![0, 0, 0, 1; 0, 0, 1, 0; 0, 1, 0, 0; 1, 0, 0, 0]
+def X : nGate 1 := !![0, 1; 1, 0]
+def XX : nGate 2 := !![0, 0, 0, 1; 0, 0, 1, 0; 0, 1, 0, 0; 1, 0, 0, 0]
 def Xₙ (n : ℕ) := tensor_power' n X
 def Xᵢ (n i : ℕ) := apply_at n i X
 
@@ -34,7 +54,7 @@ end Xn
 section Yn
 
 
-def Y : nMatrix 1 := !![0, -I; I, 0]
+def Y : nGate 1 := !![0, -I; I, 0]
 def Yₙ (n : ℕ) := tensor_power' n Y
 def Yᵢ (n i : ℕ) := apply_at n i Y
 
@@ -52,7 +72,7 @@ end Yn
 section Zn
 
 
-def Z : nMatrix 1 := !![1, 0; 0, -1]
+def Z : nGate 1 := !![1, 0; 0, -1]
 def Zₙ (n : ℕ) := tensor_power' n Z
 def Zᵢ (n i : ℕ) := apply_at n i Z
 

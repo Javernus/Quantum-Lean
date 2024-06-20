@@ -7,13 +7,28 @@ open Circuits
 open Gates
 open Equivalences
 
+/-
+The Bernstein-Vazirani algorithm is an arbitrary n-qubit algorithm that finds s using a single application of the oracle. Its oracle has the following specifications:
+
+- Secret input:     s ∈ {0, 1}^n
+- Function mapping: {0, 1}^n ↦ {0, 1}
+- Function:         f(t) = t ⬝ s mod 2
+
+Its oracle flips the plase of the qubit |t⟩ if f(t) equates to 1. As can be seen below, is defined as a tensor product of Z^(sᵢ) gates, as these Z gates flip the phase.
+
+Its circuit is as follows:
+
+Hn * Oₛ * Hn
+
+We then measure, which we do in Lean by equating it to the qubit that defines the outcome based on s.
+-/
 
 namespace BernsteinVazirani
 
 
-def Oracle (sᵢ : Bool) : nMatrix 1 := Z ^ sᵢ.toNat
-def Oracleₛ (s : ℕ -> Bool) : (i : ℕ) -> nMatrix 1 := fun i => Oracle (s i)
-def Outcome (s : ℕ -> Bool) : (i : ℕ) -> Qubit 1 := fun i => QZero * 2 • X ^ (s i).toNat
+def Oracle (sᵢ : Bool) : nGate 1 := Z ^ sᵢ.toNat
+def Oracleₛ (s : ℕ -> Bool) : (i : ℕ) -> nGate 1 := fun i => Oracle (s i)
+def Outcome (s : ℕ -> Bool) : (i : ℕ) -> nQubit 1 := fun i => QZero * 2 • X ^ (s i).toNat
 
 
 theorem sᵢ_eq_zero : H * Z ^ Bool.toNat false * H = 2 • X ^ Bool.toNat false := by
@@ -39,5 +54,6 @@ theorem BernsteinVaziraniAlgorithm (s : ℕ -> Bool) : QZeroₙ n * (Hₙ n * (t
       cases (s (n + 1));
       rw [sᵢ_eq_zero]
       rw [sᵢ_eq_one]
+
 
 end BernsteinVazirani

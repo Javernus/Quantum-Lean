@@ -5,13 +5,28 @@ import «QuantumLean».Gates.Hadamard
 open Kronecker
 open Circuits
 
+/-
+Controlled gates. This file contains a set of definitions regarding controlled gates:
+
+- CX/XC: the controlled NOT gate, and reversed controlled NOT gate.
+- CZ: the controlled Z gate.
+- CXₙ/CZₙ: the tensor power of CX/CZ.
+- SWAP: a circuit applying CX and XC to swap the values of two qubits.
+
+This file also contains identity theorems.
+
+- CX/XC/CZ_Identity: the identity for square of the gates.
+- CX_mul_CX/CZ_mul_CZ: the identity for the CXₙ/CZₙ definitions.
+- SWAP_mul_SWAP: the identity for SWAP multiplied by itself.
+-/
+
 namespace Gates
 section CNOT
 
 
 -- Make it n-qubit with props for control qubit and affected qubit(s?)
-def CX : nMatrix 2 := !![1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 0, 1; 0, 0, 1, 0]
-def XC : nMatrix 2 := !![1, 0, 0, 0; 0, 0, 0, 1; 0, 0, 1, 0; 0, 1, 0, 0]
+def CX : nGate 2 := !![1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 0, 1; 0, 0, 1, 0]
+def XC : nGate 2 := !![1, 0, 0, 0; 0, 0, 0, 1; 0, 0, 1, 0; 0, 1, 0, 0]
 def CXₙ (n : ℕ) := tensor_power' n CX
 
 
@@ -36,7 +51,7 @@ theorem CX_mul_CX : (CXₙ n) * (CXₙ n) = (1 : ℕ) := by
 
 
 -- Make it n-qubit with props for control qubit and affected qubit(s?)
-def CZ : nMatrix 2 := !![1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 1, 0; 0, 0, 0, -1]
+def CZ : nGate 2 := !![1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 1, 0; 0, 0, 0, -1]
 def CZₙ (n : ℕ) := tensor_power' n CZ
 
 
@@ -52,7 +67,7 @@ theorem CZ_mul_CZ : (CZₙ n) * (CZₙ n) = (1 : ℕ) := by
   rw [CZₙ, tensor_power_mul, CZ_Identity, tensor_power_of_natCast, one_pow]
 
 
-def SWAP : nMatrix 2 := CX * XC * CX
+def SWAP : nGate 2 := CX * XC * CX
 
 
 theorem SWAP_mul_SWAP : SWAP * SWAP = (1 : ℕ) := by
