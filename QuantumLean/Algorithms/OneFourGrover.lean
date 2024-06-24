@@ -32,7 +32,7 @@ section OneOfFourGrover
 abbrev sType := Fin 4
 
 
-def Oracle (s : sType) : sType -> ℂ := fun n => (-1) ^ ((s == n).toNat)
+def Oracle (s n : sType) : ℂ := (-1) ^ ((s == n).toNat)
 
 /-- s is a number from 1 to 4 -/
 def Oracleₛ (s : sType) : nGate 2 :=
